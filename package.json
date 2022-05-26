@@ -1,0 +1,27 @@
+{
+  "name": "seal-blog",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/js",
+    "packages/server",
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "yarn workspace @seal-blog/server run start",
+    "start:client": "yarn workspace @seal-blog/client run start",
+    "test": "yarn workspaces run test",
+    "fmt": "yarn workspaces run fmt",
+    "lint": "yarn workspaces run lint",
+    "build": "yarn workspaces run build",
+    "web": "yarn workspace @seal-blog/server ts-node-dev src/view.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "ava": "^3.15.0",
+    "prettier": "^2.4.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.4"
+  }
+}

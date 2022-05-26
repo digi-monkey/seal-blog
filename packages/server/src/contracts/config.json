@@ -1,0 +1,7 @@
+{
+  "polyjuice": {
+    "mainnet": "fill me later",
+    "testnet": "https://godwoken-testnet-v1.ckbapp.dev",
+    "devnet": "http://localhost:8024"
+  }
+}
