@@ -19,7 +19,7 @@ export default function MyRouter() {
         <Route path="/unseal">
           <Unseal />
         </Route>
-        <Route path="/js">
+        <Route path="/test">
           <TestJs />
         </Route>
         <Route path="/nft">

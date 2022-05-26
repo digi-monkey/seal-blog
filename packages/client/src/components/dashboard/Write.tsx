@@ -79,7 +79,7 @@ export function Write() {
           variant="outlined"
           rows={30}
           placeholder={
-            "This is where I want everyone to see. \n\nAnd by inserting an magic phrase like below, I will seal the content only for my readers!\n\n···seal···\n\nThis is where all the content will be encrypted.\n\nOnly readers hold NFT can read it."
+            "This is where I want everyone to see. \n\nAnd by inserting an magic phrase like below, I will seal the content only for my readers!\n\n---seal---\n\nThis is where all the content will be encrypted.\n\nOnly readers hold NFT can read it."
           }
           onChange={handleInput}
         />

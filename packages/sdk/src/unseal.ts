@@ -126,23 +126,25 @@ export function replaceEncryptText(decryptText: string) {
 }
 
 export async function main() {
-  window.addEventListener("load", async function () {
-    const s = getEncryptedContent();
-    console.log(s);
-    const { account, pk } = await getAccountAndPk();
-    if (account == null || pk == null) {
-      throw new Error("account == null || pk == null");
-    }
+  if (document.readyState != "complete") {
+    return alert("page not load yet, please wait.");
+  }
 
-    const hashId = getHashId();
-    if (hashId == null) {
-      throw new Error("hashId not found");
-    }
+  const s = getEncryptedContent();
+  console.log(s);
+  const { account, pk } = await getAccountAndPk();
+  if (account == null || pk == null) {
+    throw new Error("account == null || pk == null");
+  }
 
-    const api = new Api();
-    const decryptText = await decryptArticle(s, account, hashId, pk, api);
-    if (decryptText != null) {
-      replaceEncryptText(decryptText);
-    }
-  });
+  const hashId = getHashId();
+  if (hashId == null) {
+    throw new Error("hashId not found");
+  }
+
+  const api = new Api();
+  const decryptText = await decryptArticle(s, account, hashId, pk, api);
+  if (decryptText != null) {
+    replaceEncryptText(decryptText);
+  }
 }
