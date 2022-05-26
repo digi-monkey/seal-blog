@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^4.0.1",
+    "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "ethereumjs-util": "^7.1.4",
