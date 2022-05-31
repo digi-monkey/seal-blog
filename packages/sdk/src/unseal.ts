@@ -127,9 +127,9 @@ export function replaceEncryptText(decryptText: string) {
     const nodes: ChildNode[] = [];
 
     document.body.childNodes.forEach((n) => {
-      const node = findNodesWithSubText(n, encryptedText);
-      if (node != undefined) {
-        nodes.push(node);
+      const nds = findNodesWithSubText(n, encryptedText);
+      if (nds.length > 0) {
+        nodes.push(...nds);
       }
     });
 
@@ -161,7 +161,6 @@ export function replaceEncryptText(decryptText: string) {
 
     // splitter
     replaceSealSplitter();
-    replaceSealSplitter();
   }
 }
 
@@ -178,54 +177,50 @@ export function replaceSealSplitter() {
     .cloneNode(true).firstChild!;
 
   document.body.childNodes.forEach((n) => {
-    const s = findSpecificNode(n, originNode);
-    if (s != null) {
-      s.textContent = UNSEAL_SPLITTER_TEXT;
+    const nodes = findSpecificNode(n, originNode);
+    if (nodes.length > 0) {
+      nodes.forEach((n) => (n.textContent = UNSEAL_SPLITTER_TEXT));
     }
   });
 }
 
 export function findNodesWithSubText(
   n: ChildNode,
-  targetText: string
-): ChildNode | undefined {
+  targetText: string,
+  result: ChildNode[] = []
+): ChildNode[] {
   if (n.nodeType === Node.TEXT_NODE) {
     if (
       n.nodeValue !== null &&
       n.nodeValue.trim().length != 0 &&
       targetText.includes(n.nodeValue)
     ) {
-      return n;
+      result.push(n);
     }
   }
 
   for (let i = 0; i < n.childNodes.length; i++) {
-    const r = findNodesWithSubText(n.childNodes.item(i), targetText);
-    if (r !== undefined) {
-      return r;
-    } else {
-      continue;
-    }
+    findNodesWithSubText(n.childNodes.item(i), targetText, result);
   }
+
+  return result;
 }
 
 export function findSpecificNode(
   n: ChildNode,
-  targetNode: Node
-): ChildNode | undefined {
+  targetNode: Node,
+  result: ChildNode[] = []
+): ChildNode[] {
   //console.log("n", n, "targetNode", targetNode, "Result", n.isEqualNode(targetNode));
   if (n.isEqualNode(targetNode)) {
-    return n;
+    result.push(n);
   }
 
   for (let i = 0; i < n.childNodes.length; i++) {
-    const r = findSpecificNode(n.childNodes.item(i), targetNode);
-    if (r !== undefined) {
-      return r;
-    } else {
-      continue;
-    }
+    findSpecificNode(n.childNodes.item(i), targetNode, result);
   }
+
+  return result;
 }
 
 export async function main() {
