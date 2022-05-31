@@ -96,28 +96,28 @@ export class Query {
     });
   }
 
-  async getContractByHashId(hashId: string) {
+  async getContractByPostId(postId: string) {
     return await this.findFirstOne(this.database.contracts(), {
-      hashId: hashId,
+      postId: postId,
     });
   }
 
-  async getEnvelopByHashIdAndPk(hashId: string, pk: string) {
+  async getEnvelopByPostIdAndPk(postId: string, pk: string) {
     return await this.findFirstOne(this.database.envelops(), {
-      hashId,
+      postId: postId,
       pk,
     });
   }
 
-  async getRawPostByHashId(hashId: string) {
+  async getRawPostByPostId(postId: string) {
     return await this.findFirstOne(this.database.rawPosts(), {
-      hashId,
+      postId: postId,
     });
   }
 
-  async getPostByHashId(hashId: string) {
+  async getPostByPostId(postId: string) {
     return await this.findFirstOne(this.database.posts(), {
-      hashId,
+      postId: postId,
     });
   }
 
@@ -127,7 +127,7 @@ export class Query {
     });
   }
 
-  async getHashIdsByAccount(account: string) {
+  async getPostIdsByAccount(account: string) {
     const contract = await this.getContractByAccount(account);
     if (contract == null) {
       return undefined;
@@ -136,8 +136,8 @@ export class Query {
     return await this.getPosts(contract.contractAddress);
   }
 
-  async getKeyByHashId(hashId: string) {
-    return await this.findFirstOne(this.database.keys(), { hashId });
+  async getKeyByPostId(postId: string) {
+    return await this.findFirstOne(this.database.keys(), { postId: postId });
   }
 
   async insertContract(data: OptionalUnlessRequiredId<Contracts>) {

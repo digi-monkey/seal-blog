@@ -1,5 +1,5 @@
 import { Card, Grid } from "@material-ui/core";
-import { Heading, Text, IconBookOpen, Button } from "degen";
+import { Heading, Text, Button } from "degen";
 import React, { useEffect, useState } from "react";
 import { Account } from "../metamask/account";
 import { Token } from "../nft/Token";
@@ -37,7 +37,7 @@ export function User() {
 
   const getPosts = async () => {
     try {
-      const res = await api.getHashIds(account!);
+      const res = await api.getPostIds(account!);
       console.log(res);
       setPosts(res);
     } catch (error: any) {
@@ -62,14 +62,11 @@ export function User() {
           <Grid container spacing={1}>
             <Grid item xs={9}>
               <Text>
-                <a target={"_blank"} href={"/unseal?hashId=" + p.hashId}>
-                  {p.hashId}
+                <a target={"_blank"} href={"/unseal?postId=" + p.postId}>
+                  {p.postId}
                 </a>
               </Text>
               <Text>{p.createdTs}</Text>
-            </Grid>
-            <Grid item xs={3} style={{ textAlign: "left" }}>
-              <IconBookOpen />
             </Grid>
           </Grid>
         </Card>

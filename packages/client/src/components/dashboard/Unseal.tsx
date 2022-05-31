@@ -85,9 +85,9 @@ function useQuery() {
 
 export function Unseal() {
   let query = useQuery();
-  const hashId = query.get("hashId");
-  if (hashId == null) {
-    throw new Error("hashId is null in query");
+  const postId = query.get("postId");
+  if (postId == null) {
+    throw new Error("postId is null in query");
   }
   const [rawArticleData, setRawArticleData] = useState<string>();
   const [isRawArticleLoading, setIsRawArticleLoading] =
@@ -101,7 +101,7 @@ export function Unseal() {
 
   const loadRawArticle = async () => {
     setIsRawArticleLoading(true);
-    const data = (await api.getPost(hashId)).text;
+    const data = (await api.getPost(postId)).text;
     if (data === null) {
       // sometimes the tx will be load failed with empty string
       // we need to inform user to refresh pages
