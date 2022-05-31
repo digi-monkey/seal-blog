@@ -36,12 +36,13 @@ export const setUrlTargetMethod = async (
     req: any,
     res: { send: (arg0: { status: string; data?: any; error?: any }) => void }
   ) => {
+    logger.debug(`${request_type} ${url}`);
     try {
       const return_data = await method(req, res);
       res.send({ status: "ok", data: return_data });
       //res.send(return_data); // just render
     } catch (error: any) {
-      logger.error(`${url}, ${error.message}`);
+      logger.error(`${error.message}`);
       res.send({ status: "failed", error: error.message });
     }
   };

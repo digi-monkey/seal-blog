@@ -83,8 +83,10 @@ export function Token(props: NftManagerProp) {
 
   const deploy = async () => {
     if (isDeployed) {
-      console.log("already deployed");
-      return;
+      const isConfirm = window.confirm(
+        "you already has an nft contract, deployed a new one?"
+      );
+      if (!isConfirm) return;
     }
 
     const tokenPrice = web3Utils.toWei("0.2", "ether");
@@ -97,12 +99,19 @@ export function Token(props: NftManagerProp) {
       .send({
         from: account!,
       })
+      .on("transactionHash", function (txHash) {
+        console.log("txHash:", txHash);
+      })
+      .on("error", function (err) {
+        console.log(err.message);
+      })
       .on("receipt", async function (receipt) {
         setIsDeployed(true);
         const address = receipt.contractAddress;
         setDeployedContractAddr(address);
         const txHash = receipt.transactionHash;
-        await api.bindContract(txHash);
+        const res = await api.bindContract(txHash);
+        console.log("bind contract:", res);
       });
   };
 
@@ -159,19 +168,19 @@ export function Token(props: NftManagerProp) {
           </div>
         )}
         <hr />
-        {!isDeployed && (
+        {
           <div>
-            <Text>No Contract?</Text>
+            <Text>No Contract/Not Your Contract?</Text>
             <Text variant="large">
               <a style={styles.link} onClick={deploy}>
-                Create One
+                Create New One
               </a>
             </Text>
             <Text>
               <a href="/nft/info">learn more</a>
             </Text>
           </div>
-        )}
+        }
       </Card>
     </div>
   );

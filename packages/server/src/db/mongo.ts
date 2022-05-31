@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient, Document, ObjectId } from "mongodb";
+import { Collection, Db, MongoClient, Document } from "mongodb";
 
 const defaultUrl = "mongodb://localhost:27017";
 const defaultDbName = "seal-blogblog";
@@ -36,34 +36,29 @@ const _schemeValidator = {
 
 //todo: hashId should under contract name
 
-export interface Key {
-  _id: ObjectId;
+export interface Key extends Document {
   hashId: string; // the encrypt text sha1 hash id, also work as post id to locate a raw post
   key: string;
   iv: string;
 }
 
-export interface Envelop {
-  _id: ObjectId;
+export interface Envelop extends Document {
   hashId: string;
   pk: string;
   envelop: string;
 }
 
-export interface RawPost {
-  _id: ObjectId;
+export interface RawPost extends Document {
   hashId: string; // also the post id
   text: string;
 }
 
-export interface Posts {
-  _id: ObjectId;
+export interface Posts extends Document {
   contractAddress: string;
   hashId: string;
 }
 
-export interface Contracts {
-  _id: ObjectId;
+export interface Contracts extends Document {
   account: string;
   contractAddress: string;
 }
@@ -93,23 +88,23 @@ export class Database {
     return this.client.db(this.dbName).collection(name);
   }
 
-  keys(): Collection<Document> {
-    return this.table(keysTableName);
+  keys(): Collection<Key> {
+    return this.table(keysTableName) as any;
   }
 
-  envelops(): Collection<Document> {
-    return this.table(envelopsTableName);
+  envelops(): Collection<Envelop> {
+    return this.table(envelopsTableName) as any;
   }
 
-  rawPosts(): Collection<Document> {
-    return this.table(rawPostTableName);
+  rawPosts(): Collection<RawPost> {
+    return this.table(rawPostTableName) as any;
   }
 
-  contracts(): Collection<Document> {
-    return this.table(contractsTableName);
+  contracts(): Collection<Contracts> {
+    return this.table(contractsTableName) as any;
   }
 
-  posts(): Collection<Document> {
-    return this.table(postsTableName);
+  posts(): Collection<Posts> {
+    return this.table(postsTableName) as any;
   }
 }

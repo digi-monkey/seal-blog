@@ -7,6 +7,11 @@ const SEAL_CONTENT_MATCH_REGEX =
 const SPLITTER_REGEX =
   "\n\n······click here to read encrypted content. Power By SealBlog·······";
 
+const SPLITTER_HTML_REGEX =
+  /\<(.)+\>······click(.)+unseal?(.)+hashId=0x(.)+to read encrypted content. Power By (.)+SealBlog<\/a>·······\<\/[a-zA-Z0-9]+\>/;
+
+const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ unseal ~~~~~~~~~~~";
+
 declare global {
   interface Window {
     ethereum: any;
@@ -118,10 +123,108 @@ export function replaceEncryptText(decryptText: string) {
 
   if (s.length > 0) {
     const encryptedText = s[0].split(SPLITTER_REGEX)[1];
-    document.body.innerText = document.body.innerText.replace(
-      encryptedText,
-      decryptText
-    );
+
+    const nodes: ChildNode[] = [];
+
+    document.body.childNodes.forEach((n) => {
+      const node = findNodesWithSubText(n, encryptedText);
+      if (node != undefined) {
+        nodes.push(node);
+      }
+    });
+
+    console.log(nodes);
+    // encrypt text
+    {
+      if (nodes.length === 0) {
+        return alert("no nodes!");
+      }
+      const firstParent = nodes[0].parentNode;
+      const newNode = document.createElement("p");
+      newNode.innerText = decryptText;
+      firstParent?.replaceChild(newNode, nodes[0]);
+
+      nodes.forEach((n, index) => {
+        if (index !== 0) {
+          n.parentNode?.replaceChild(document.createElement("p"), n);
+        }
+      });
+
+      // remove extra br
+      // todo: side effects
+      const pList = document.getElementsByTagName("p");
+      for (let i = 0; i < pList.length; i++) {
+        pList[i].innerHTML = pList[i].innerHTML.replace("<br>", "");
+        pList[i].innerHTML = pList[i].innerHTML.replace("<br/>", "");
+      }
+    }
+
+    // splitter
+    replaceSealSplitter();
+    replaceSealSplitter();
+  }
+}
+
+export function replaceSealSplitter() {
+  const match = document.body.innerHTML.match(SPLITTER_HTML_REGEX);
+  if (!match || match.length === 0) {
+    throw new Error("no match splitter");
+  }
+
+  const nodeHtmlStr = match[0].trim();
+  const originNode = document
+    .createRange()
+    .createContextualFragment(nodeHtmlStr)
+    .cloneNode(true).firstChild!;
+
+  document.body.childNodes.forEach((n) => {
+    const s = findSpecificNode(n, originNode);
+    if (s != null) {
+      s.textContent = UNSEAL_SPLITTER_TEXT;
+    }
+  });
+}
+
+export function findNodesWithSubText(
+  n: ChildNode,
+  targetText: string
+): ChildNode | undefined {
+  if (n.nodeType === Node.TEXT_NODE) {
+    if (
+      n.nodeValue !== null &&
+      n.nodeValue.trim().length != 0 &&
+      targetText.includes(n.nodeValue)
+    ) {
+      return n;
+    }
+  }
+
+  for (let i = 0; i < n.childNodes.length; i++) {
+    const r = findNodesWithSubText(n.childNodes.item(i), targetText);
+    if (r !== undefined) {
+      return r;
+    } else {
+      continue;
+    }
+  }
+}
+
+export function findSpecificNode(
+  n: ChildNode,
+  targetNode: Node
+): ChildNode | undefined {
+  //console.log("n", n, "targetNode", targetNode, "Result", n.isEqualNode(targetNode));
+  if (n.isEqualNode(targetNode)) {
+    return n;
+  }
+
+  for (let i = 0; i < n.childNodes.length; i++) {
+    const r = findSpecificNode(n.childNodes.item(i), targetNode);
+    if (r !== undefined) {
+      return r;
+    } else {
+      continue;
+    }
   }
 }
 
