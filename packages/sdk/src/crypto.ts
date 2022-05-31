@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js";
 import AES from "crypto-js/aes";
+import { Base64Str, HexStr, Utf8Str } from "./types";
 const sigUtil = require("@metamask/eth-sig-util");
 const ethUtil = require("ethereumjs-util");
 
@@ -9,10 +10,6 @@ const DECRYPT_ENCODING = CryptoJS.enc.Utf8;
 const ENCRYPT_ENCODING = CryptoJS.enc.Base64;
 const HASH_ENCODING = CryptoJS.enc.Hex;
 const HEX_ENCODING = CryptoJS.enc.Hex;
-
-export type HexStr = string;
-export type Base64Str = string;
-export type Utf8Str = string;
 
 export function decrypt(
   encryptData: Base64Str,

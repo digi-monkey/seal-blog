@@ -11,14 +11,17 @@ declare global {
 export interface AccountProp {
   accountCallback?: (account: string) => any;
   encryptionPublicKeyCallback?: (pk: string) => any;
+  chainIdCallBack?: (chainId: string) => any;
 }
 
 export function Account(prop: AccountProp) {
   const [account, setAccount] = useState<string>();
   const [encryptionPublicKey, setEncryptionPublicKey] = useState<string>();
+  const [chainId, setChainId] = useState<string>();
 
   useEffect(() => {
     connectWallet();
+    requestChainId();
   }, []);
 
   useEffect(() => {
@@ -40,6 +43,12 @@ export function Account(prop: AccountProp) {
     }
   }, [encryptionPublicKey]);
 
+  useEffect(() => {
+    if (chainId != null && prop.chainIdCallBack != null) {
+      prop.chainIdCallBack(chainId);
+    }
+  }, [chainId]);
+
   const connectWallet = async () => {
     if (!account) {
       const accounts = await window.ethereum.request({
@@ -58,6 +67,23 @@ export function Account(prop: AccountProp) {
       } else {
         setAccount(undefined);
       }
+    }
+  };
+
+  const requestChainId = async () => {
+    if (!chainId) {
+      const chainId = await window.ethereum.request({
+        method: "net_version",
+      });
+      await setChainId(chainId);
+      listenForChainChanged();
+    }
+  };
+
+  const listenForChainChanged = () => {
+    window.ethereum.on("chainChanged", handleChainChanged);
+    function handleChainChanged(chainId: string) {
+      setChainId(chainId);
     }
   };
 

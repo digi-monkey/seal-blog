@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Base64Str, HexStr } from "./types";
 
 export const DEFAULT_API_URL = "http://localhost:9112";
 
@@ -103,56 +104,13 @@ export class Api extends base {
     super(url || DEFAULT_API_URL, httpRequest || newHttpRequest);
   }
 
-  async getAesKeyDoubleEnvelop(token_id: string, req_id: string) {
-    return (await this.httpRequest("get_aes_key_double_envelop_by_public_key", {
-      token_id: token_id,
-      id: req_id,
-    })) as string;
-  }
-
-  async loadArticleList() {
-    return (await this.httpRequest("load_article_list")) as string[];
-  }
-
-  async getEncryptArticleRawData(txHash: string): Promise<string | undefined> {
-    return await this.httpRequest("get_encrypt_article_raw_data", {
-      tx_hash: txHash,
-    });
-  }
-
-  async decryptArticle(AESKey: string, article: string): Promise<string> {
-    return await this.httpRequest(
-      "decrypt_article_with_key",
-      {
-        key: AESKey,
-        data: article,
-      },
-      HttpProtocolMethod.post
-    );
-  }
-
-  async doubleDecryptArticle(
-    AESKey: string, // the aes key here is still encrypted hence double decrypt from server
-    article: string,
-    reqId: string
-  ): Promise<string> {
-    return await this.httpRequest(
-      "double_decrypt_article_with_key",
-      {
-        key: AESKey,
-        data: article,
-        id: reqId,
-      },
-      HttpProtocolMethod.post
-    );
-  }
-
   async addPost(
-    account: string,
-    rawPost: string,
+    account: HexStr,
+    rawPost: Base64Str,
     key: string,
     iv: string,
-    hashId: string
+    postId: HexStr,
+    chainId: HexStr
   ) {
     return await this.httpRequest(
       "add_post",
@@ -161,27 +119,28 @@ export class Api extends base {
         raw_post: rawPost,
         key,
         iv,
-        hash_id: hashId,
+        post_id: postId,
+        chain_id: chainId,
       },
       HttpProtocolMethod.post
     );
   }
 
-  async getPost(hashId: string) {
+  async getPost(postId: string) {
     return await this.httpRequest(
       "get_post",
       {
-        hash_id: hashId,
+        post_id: postId,
       },
       HttpProtocolMethod.get
     );
   }
 
-  async getEnvelopByHashIdAndPk(hashId: string, pk: string) {
+  async getEnvelopByPostIdAndPk(postId: string, pk: string) {
     return await this.httpRequest(
-      "get_envelop_by_hash_id_and_pk",
+      "get_envelop_by_post_id_and_pk",
       {
-        hash_id: hashId,
+        post_id: postId,
         pk,
       },
       HttpProtocolMethod.get
@@ -208,19 +167,19 @@ export class Api extends base {
     );
   }
 
-  async getContractAddressByHashId(hashId: string) {
+  async getContractAddressByPostId(postId: string) {
     return await this.httpRequest(
-      "get_contract_address_by_hash_id",
+      "get_contract_address_by_post_id",
       {
-        hash_id: hashId,
+        post_id: postId,
       },
       HttpProtocolMethod.get
     );
   }
 
-  async getHashIds(account: string) {
+  async getPostIds(account: string) {
     return await this.httpRequest(
-      "get_hash_ids",
+      "get_post_ids",
       {
         account,
       },

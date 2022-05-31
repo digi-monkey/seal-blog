@@ -1,16 +1,11 @@
 import { Api } from "./api";
 import { decrypt } from "./crypto";
-
-const SEAL_CONTENT_MATCH_REGEX =
-  /(\s)+······click here(.)+to read encrypted content. Power By SealBlog(.)+(\s)+[\s\S]+Power By SealBlog·······/;
-
-const SPLITTER_REGEX =
-  "\n\n······click here to read encrypted content. Power By SealBlog·······";
-
-const SPLITTER_HTML_REGEX =
-  /\<(.)+\>······click(.)+unseal?(.)+hashId=0x(.)+to read encrypted content. Power By (.)+SealBlog<\/a>·······\<\/[a-zA-Z0-9]+\>/;
-
-const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ unseal ~~~~~~~~~~~";
+import {
+  SEAL_CONTENT_MATCH_REGEX,
+  SPLITTER_REGEX,
+  UNSEAL_SPLITTER_TEXT,
+  SPLITTER_HTML_REGEX,
+} from "./regex";
 
 declare global {
   interface Window {
@@ -18,11 +13,11 @@ declare global {
   }
 }
 
-export function getHashId() {
+export function getPostId() {
   const links = document.links;
   for (let i = 0; i < links.length; i++) {
-    if (links.item(i)?.href.includes("hashId=")) {
-      return links.item(i)?.href.split("hashId=").at(-1);
+    if (links.item(i)?.href.includes("postId=")) {
+      return links.item(i)?.href.split("postId=").at(-1);
     }
   }
 
@@ -51,7 +46,7 @@ export async function decryptArticle(
 ) {
   let envelop;
   try {
-    envelop = (await api.getEnvelopByHashIdAndPk(hashId, pk)).envelop;
+    envelop = (await api.getEnvelopByPostIdAndPk(hashId, pk)).envelop;
     console.log(envelop);
   } catch (error: any) {
     alert(
@@ -177,9 +172,12 @@ export function replaceSealSplitter() {
 }
 
 export function addDecryptButton() {
+  let isSuccess = false;
   const originNode = findFirstSealSplitterNode();
-  if (originNode == null)
-    return console.log("no splitter match, abort adding decrypt button");
+  if (originNode == null) {
+    console.log("no splitter match, abort adding decrypt button");
+    return isSuccess;
+  }
 
   document.body.childNodes.forEach((n) => {
     const nodes = findSpecificNode(n, originNode);
@@ -204,8 +202,12 @@ export function addDecryptButton() {
         },
         false
       );
+
+      isSuccess = true;
     }
   });
+
+  return isSuccess;
 }
 
 export function findFirstSealSplitterNode() {
@@ -273,7 +275,7 @@ export async function unseal() {
     throw new Error("account == null || pk == null");
   }
 
-  const hashId = getHashId();
+  const hashId = getPostId();
   if (hashId == null) {
     throw new Error("hashId not found");
   }
@@ -287,8 +289,29 @@ export async function unseal() {
 
 try {
   if (window) {
+    let isSuccess = false;
+    let retryCount = 0;
+    const maxRetry = 15;
+
+    // first time
     window.addEventListener("load", () => {
-      addDecryptButton();
+      isSuccess = addDecryptButton();
     });
+
+    // retry if failed
+    if (isSuccess === false) {
+      const t = setInterval(() => {
+        isSuccess = addDecryptButton();
+        retryCount++;
+
+        if (retryCount > maxRetry) {
+          clearInterval(t);
+        }
+
+        if (isSuccess) {
+          clearInterval(t);
+        }
+      }, 5000);
+    }
   }
 } catch (error) {}

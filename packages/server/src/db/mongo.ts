@@ -34,28 +34,26 @@ const _schemeValidator = {
   },
 };
 
-//todo: hashId should under contract name
-
 export interface Key extends Document {
-  hashId: string; // the encrypt text sha1 hash id, also work as post id to locate a raw post
+  postId: string; // the encrypt text sha1 hash id, also work as post id to locate a raw post
   key: string;
   iv: string;
 }
 
 export interface Envelop extends Document {
-  hashId: string;
+  postId: string;
   pk: string;
   envelop: string;
 }
 
 export interface RawPost extends Document {
-  hashId: string; // also the post id
+  postId: string; // also the post id
   text: string;
 }
 
 export interface Posts extends Document {
   contractAddress: string;
-  hashId: string;
+  postId: string;
 }
 
 export interface Contracts extends Document {

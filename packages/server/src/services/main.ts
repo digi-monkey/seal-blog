@@ -10,7 +10,13 @@ import {
   Query,
   RawPost,
 } from "../db";
-import { parseHashId, encryptAesKeyAndIv } from "@seal-blog/sdk";
+import {
+  parseHashId,
+  encryptAesKeyAndIv,
+  calcPostId,
+  HexStr,
+  parsePostId,
+} from "@seal-blog/sdk";
 import { provider, ZERO_ADDRESS } from "../web3";
 import CONTRACT_ARTIFACTS from "../contracts/contract-artifact.json";
 import { ethers } from "ethers";
@@ -28,48 +34,54 @@ export class MainService extends Service {
   @allowType(HttpProtocolMethod.post)
   async add_post() {
     // todo: require signature on rawPost and check it
-    let rawPost = this.req.body.data.raw_post;
-    let _hashId = this.req.body.data.hash_id;
-    let account = this.req.body.data.account;
-
+    const rawPost = this.req.body.data.raw_post;
+    const _postId = this.req.body.data.post_id;
+    const account = this.req.body.data.account;
+    const chainId: HexStr = this.req.body.data.chain_id;
     // todo: maybe encrypt this to protect key and iv
     // todo: validate key/iv length
-    let key = this.req.body.data.key;
-    let iv = this.req.body.data.iv;
+    const key = this.req.body.data.key;
+    const iv = this.req.body.data.iv;
 
-    logger.info(account, rawPost, key, _hashId);
+    logger.info(account, rawPost, key, _postId);
 
     const contractObj = await this.query.getContractByAccount(account);
     if (contractObj == null) {
       throw new Error(`contractObj not found, account: ${account}`);
     }
 
-    const hashId = await parseHashId(rawPost);
-    if (_hashId !== hashId) {
-      throw new Error(`hash id mismatch, ${_hashId}, ${hashId}`);
+    const hashId = parseHashId(rawPost);
+    const postId = calcPostId(hashId, chainId, contractObj.contractAddress);
+    if (_postId !== postId) {
+      throw new Error(`post id mismatch, ${_postId}, ${postId}`);
     }
 
     const keyDoc: Key = {
-      hashId,
+      postId,
       key,
       iv,
     };
     const insertKeyResult = await this.query.insertKey(keyDoc);
 
     const rawPostDoc: RawPost = {
-      hashId,
+      postId,
       text: rawPost,
     };
     const insertRawPostResult = await this.query.insertRawPost(rawPostDoc);
 
     const postDoc: Posts = {
-      hashId,
+      postId,
       contractAddress: contractObj.contractAddress,
     };
     const insertPostResult = await this.query.insertPost(postDoc);
 
+    // generate envelops
+    // todo: run in another thread
+    this.req.query.post_id = postId;
+    this.generate_envelops();
+
     return {
-      hashId,
+      postId,
       insertKeyResult,
       insertRawPostResult,
       insertPostResult,
@@ -77,42 +89,38 @@ export class MainService extends Service {
   }
 
   async get_post() {
-    const hashId = this.req.query.hash_id;
-    const post = await this.query.getRawPostByHashId(hashId);
+    const postId = this.req.query.post_id;
+    const post = await this.query.getRawPostByPostId(postId);
     if (post == null) {
-      throw new Error(`post not found, hashId: ${hashId}`);
+      throw new Error(`post not found, hashId: ${postId}`);
     }
     return post;
   }
 
-  async get_envelop_by_hash_id_and_pk() {
-    const hashId = this.req.query.hash_id;
+  async get_envelop_by_post_id_and_pk() {
+    const postId = this.req.query.post_id;
     const pk = this.req.query.pk;
-    const envelop = await this.query.getEnvelopByHashIdAndPk(hashId, pk);
+    const envelop = await this.query.getEnvelopByPostIdAndPk(postId, pk);
     if (envelop == null) {
-      throw new Error(`envelop not found, hashId: ${hashId}, pk: ${pk}`);
+      throw new Error(`envelop not found, hashId: ${postId}, pk: ${pk}`);
     }
     return envelop;
   }
 
   async generate_envelops() {
-    const hashId = this.req.query.hash_id;
-    const account = this.req.query.account.toLowerCase();
-    const keyObj = await this.query.getKeyByHashId(hashId);
+    const postId = this.req.query.post_id;
+    const keyObj = await this.query.getKeyByPostId(postId);
     if (keyObj == null) {
-      throw new Error(`key not found, hashId: ${hashId}`);
+      throw new Error(`key not found, hashId: ${postId}`);
     }
-    logger.log("keyObj: ", keyObj);
+    logger.info("keyObj: ", keyObj);
     const key = keyObj.key;
     const iv = keyObj.iv;
 
-    const contractObj = await this.query.getContractByAccount(account);
-    if (contractObj == null) {
-      throw new Error(`contractObj not found, account: ${account}`);
-    }
+    const contractAddress = parsePostId(postId).contractAddress;
 
     const accessToken = new ethers.Contract(
-      contractObj.contractAddress,
+      contractAddress,
       CONTRACT_ARTIFACTS.abi,
       provider
     );
@@ -135,7 +143,7 @@ export class MainService extends Service {
     const envelopPromise = pks.map(async (pk) => {
       const _envelop: string = await encryptAesKeyAndIv(pk, key, iv);
       const envelop: Envelop = {
-        hashId,
+        postId,
         pk,
         envelop: _envelop,
       };
@@ -146,7 +154,7 @@ export class MainService extends Service {
     const res = await this.query.insertEnvelops(envelops);
 
     return {
-      hashId,
+      postId,
       insertResult: res,
     };
   }
@@ -192,11 +200,11 @@ export class MainService extends Service {
     return contractObj.contractAddress;
   }
 
-  async get_contract_address_by_hash_id() {
-    const hashId = this.req.query.hash_id;
-    const postObj = await this.query.getPostByHashId(hashId);
+  async get_contract_address_by_post_id() {
+    const postId = this.req.query.post_id;
+    const postObj = await this.query.getPostByPostId(postId);
     if (postObj == null) {
-      throw new Error(`contract not found, account: ${hashId}`);
+      throw new Error(`contract not found, account: ${postId}`);
     }
 
     console.log(postObj);
@@ -204,7 +212,7 @@ export class MainService extends Service {
     return postObj.contractAddress;
   }
 
-  async get_hash_ids() {
+  async get_post_ids() {
     const account = this.req.query.account;
     const contractObj = await this.query.getContractByAccount(account);
     if (contractObj == null) {
