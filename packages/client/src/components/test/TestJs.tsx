@@ -4,7 +4,7 @@ import { Heading, Stack } from "degen";
 import { Grid } from "@material-ui/core";
 import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
-import { main, Api } from "@seal-blog/sdk";
+import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
 
 const api = new Api(API_SERVER_URL);
@@ -136,13 +136,6 @@ export function TestJs() {
             <ReactMarkdown>{rawArticleData!}</ReactMarkdown>
           </div>
 
-          <button
-            onClick={() => {
-              main();
-            }}
-          >
-            decrypt
-          </button>
           <div style={styles.footnote}>
             <div style={styles.footnoteLink}>
               Power by{" "}

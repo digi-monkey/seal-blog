@@ -61,7 +61,11 @@ export function User() {
         <Card key={id} style={{ padding: "10px", margin: "20px 0" }}>
           <Grid container spacing={1}>
             <Grid item xs={9}>
-              <Text>{p.hashId}</Text>
+              <Text>
+                <a target={"_blank"} href={"/unseal?hashId=" + p.hashId}>
+                  {p.hashId}
+                </a>
+              </Text>
               <Text>{p.createdTs}</Text>
             </Grid>
             <Grid item xs={3} style={{ textAlign: "left" }}>

@@ -3,6 +3,8 @@ seal-blog
 
 one line javascript code to make your web2 blog WEB3.
 
+> Make Blog Cool Again
+
 turn your personal blog post encrypted and only readable with NFT membership token holder. the NFT is lived on Godwoken blockchain, the layer2 rollup of ckb network.
 
 How to run

@@ -165,16 +165,8 @@ export function replaceEncryptText(decryptText: string) {
 }
 
 export function replaceSealSplitter() {
-  const match = document.body.innerHTML.match(SPLITTER_HTML_REGEX);
-  if (!match || match.length === 0) {
-    throw new Error("no match splitter");
-  }
-
-  const nodeHtmlStr = match[0].trim();
-  const originNode = document
-    .createRange()
-    .createContextualFragment(nodeHtmlStr)
-    .cloneNode(true).firstChild!;
+  const originNode = findFirstSealSplitterNode();
+  if (originNode == null) throw new Error("no match splitter!");
 
   document.body.childNodes.forEach((n) => {
     const nodes = findSpecificNode(n, originNode);
@@ -182,6 +174,52 @@ export function replaceSealSplitter() {
       nodes.forEach((n) => (n.textContent = UNSEAL_SPLITTER_TEXT));
     }
   });
+}
+
+export function addDecryptButton() {
+  const originNode = findFirstSealSplitterNode();
+  if (originNode == null)
+    return console.log("no splitter match, abort adding decrypt button");
+
+  document.body.childNodes.forEach((n) => {
+    const nodes = findSpecificNode(n, originNode);
+    if (nodes.length > 0) {
+      const node = nodes[0];
+      const btn = document.createElement("button");
+      btn.innerText = "decrypt";
+      btn.onclick = unseal;
+
+      const aLink = findNodesWithSubText(node, "here")[0];
+      if (aLink == null || aLink.parentElement == null) {
+        return console.log("no here text found");
+      }
+
+      aLink.parentElement.addEventListener(
+        "click",
+        function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          unseal();
+          return false;
+        },
+        false
+      );
+    }
+  });
+}
+
+export function findFirstSealSplitterNode() {
+  const match = document.body.innerHTML.match(SPLITTER_HTML_REGEX);
+  if (!match || match.length === 0) {
+    return undefined;
+  }
+
+  const nodeHtmlStr = match[0].trim();
+  const firstNode = document
+    .createRange()
+    .createContextualFragment(nodeHtmlStr)
+    .cloneNode(true).firstChild!;
+  return firstNode;
 }
 
 export function findNodesWithSubText(
@@ -223,7 +261,7 @@ export function findSpecificNode(
   return result;
 }
 
-export async function main() {
+export async function unseal() {
   if (document.readyState != "complete") {
     return alert("page not load yet, please wait.");
   }
@@ -246,3 +284,11 @@ export async function main() {
     replaceEncryptText(decryptText);
   }
 }
+
+try {
+  if (window) {
+    window.addEventListener("load", () => {
+      addDecryptButton();
+    });
+  }
+} catch (error) {}
