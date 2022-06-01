@@ -111,6 +111,7 @@ core
 
 articles/
 lib/
+bundle/
 
 packages/client/node_modules
 packages/client/lib

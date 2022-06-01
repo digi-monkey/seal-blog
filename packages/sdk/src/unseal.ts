@@ -286,32 +286,3 @@ export async function unseal() {
     replaceEncryptText(decryptText);
   }
 }
-
-try {
-  if (window) {
-    let isSuccess = false;
-    let retryCount = 0;
-    const maxRetry = 15;
-
-    // first time
-    window.addEventListener("load", () => {
-      isSuccess = addDecryptButton();
-    });
-
-    // retry if failed
-    if (isSuccess === false) {
-      const t = setInterval(() => {
-        isSuccess = addDecryptButton();
-        retryCount++;
-
-        if (retryCount > maxRetry) {
-          clearInterval(t);
-        }
-
-        if (isSuccess) {
-          clearInterval(t);
-        }
-      }, 5000);
-    }
-  }
-} catch (error) {}

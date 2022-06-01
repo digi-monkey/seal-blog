@@ -6,6 +6,7 @@ import {
   sealPost,
   generateRandomAesKey,
   generateRandomIv,
+  addDecryptButton,
 } from "@seal-blog/sdk";
 import { Account } from "../metamask/account";
 import ReactMarkdown from "react-markdown";
@@ -67,6 +68,9 @@ export function Write() {
     console.log(t);
     const res = await api.addPost(account, t, key, iv, postId, chainIdHex);
     console.log(res);
+
+    // add decrypt function
+    addDecryptButton();
   };
 
   const handleInput = (evt: React.ChangeEvent<HTMLInputElement>) => {

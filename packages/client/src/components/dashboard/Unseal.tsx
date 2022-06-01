@@ -7,6 +7,8 @@ import { useLocation } from "react-router-dom";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
 
+import "@seal-blog/sdk/lib/js-script";
+
 const api = new Api(API_SERVER_URL);
 
 const styles = {

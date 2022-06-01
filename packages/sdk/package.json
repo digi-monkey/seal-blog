@@ -6,9 +6,10 @@
   "scripts": {
     "start": "ts-node-dev src/index.ts",
     "test": "ava",
-    "fmt": "prettier --write src/**/*.ts \"src/*.ts\" tests/*.ts package.json",
+    "fmt": "prettier --write src/**/*.ts \"src/*.ts\" tests/*.ts package.json tsconfig.json webpack.config.js",
     "lint": "eslint -c ../../.eslintrc.js \"src/**/*.ts\" \"src/*.ts\" \"tests/**/*.ts\"",
     "build": "tsc",
+    "bundle": "webpack",
     "web": "ts-node-dev src/view.ts"
   },
   "ava": {
@@ -29,7 +30,11 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
+    "buffer": "^6.0.3",
     "eslint": "^8.1.0",
-    "webpack": "^5.72.1"
+    "ts-loader": "^9.3.0",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-node-externals": "^3.0.0"
   }
 }
