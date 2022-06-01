@@ -11,6 +11,8 @@ import { Account } from "../metamask/account";
 import ReactMarkdown from "react-markdown";
 import { API_SERVER_URL, CLIENT_URL } from "../../configs";
 
+import "@seal-blog/sdk/lib/js-script";
+
 const api = new Api(API_SERVER_URL);
 
 const styles = {
