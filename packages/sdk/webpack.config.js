@@ -1,24 +1,25 @@
 // shared config (dev and prod)
 const path = require("path");
 const webpack = require("webpack");
-const nodeExternals = require('webpack-node-externals');
+const nodeExternals = require("webpack-node-externals");
 
 const basicConfig = {
   context: path.resolve(__dirname, "./src"),
-  entry: "./index.ts",
-  target: 'node',
+  entry: "./js-script.ts",
+  target: "node",
   mode: "production",
   output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, "./lib"),
-    libraryTarget: 'umd',
-    library: 'PolyjuiceHttpProvider',
-    libraryExport: 'default',
-    globalObject: 'this',
+    filename: "unseal.min.js",
+    path: path.resolve(__dirname, "./bundle"),
+    libraryTarget: "umd",
+    library: "Unseal",
+    libraryExport: "default",
+    globalObject: "this",
+    iife: true,
   },
 
-  // in order to ignore all modules in node_modules folder 
-  externals: [nodeExternals(), "@polyjuice-provider/godwoken"],
+  // in order to ignore all modules in node_modules folder
+  externals: [nodeExternals()],
 
   resolve: {
     extensions: [".js", ".ts"],
@@ -28,7 +29,7 @@ const basicConfig = {
       https: require.resolve("https-browserify"),
       url: require.resolve("url"),
       os: require.resolve("os-browserify/browser"),
-      crypto: require.resolve("crypto-browserify")
+      crypto: require.resolve("crypto-browserify"),
     },
     alias: {
       buffer: path.join(__dirname, "./node_modules/buffer"),
@@ -60,18 +61,24 @@ const basicConfig = {
     }),
   ],
   optimization: {
-    minimize: false,
+    minimize: true,
   },
 };
 
 // can be used by html script tag. eg: <script src="/path/to/PolyjuiceHttpProvider.js"></script>
-const browserConfig = {...basicConfig, ...{
-  target: 'web',
-  output: {...basicConfig.output, ...{
-    path: path.resolve(__dirname, "./dist/"),
-    filename: 'PolyjuiceHttpProvider.js',
-  }},
-  externals: [],
-}}
+const browserConfig = {
+  ...basicConfig,
+  ...{
+    target: "web",
+    output: {
+      ...basicConfig.output,
+      ...{
+        path: path.resolve(__dirname, "./bundle/"),
+        filename: "unseal.min.js",
+      },
+    },
+    externals: [],
+  },
+};
 
 module.exports = [browserConfig];
