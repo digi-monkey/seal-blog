@@ -6,6 +6,8 @@ import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
+import { contractFactory } from "../../api/web3";
+import web3Utils from "web3-utils";
 
 import "@seal-blog/sdk/lib/js-script";
 
@@ -116,9 +118,16 @@ export function Unseal() {
     useState<boolean>(false);
   const [isRawArticleLoadFailed, setIsRawArticleLoadFailed] =
     useState<boolean>(false);
+  const [contractAddress, setContractAddress] = useState<string>();
+  const [account, setAccount] = useState<string>();
 
   useEffect(() => {
     loadRawArticle();
+    connectWallet();
+    const addr = web3Utils.toChecksumAddress(
+      "0x" + postId.slice(2).slice(16, 56)
+    );
+    setContractAddress(addr);
   }, []);
 
   const loadRawArticle = async () => {
@@ -135,6 +144,38 @@ export function Unseal() {
     await setIsRawArticleLoadFailed(false);
     await setRawArticleData(data);
     setIsRawArticleLoading(false);
+  };
+
+  const subscribe = async () => {
+    contractFactory.options.address = contractAddress!;
+    const tokenPrice = await contractFactory.methods.tokenPrice().call();
+    console.log(tokenPrice);
+    const tx = await contractFactory.methods
+      .mint(account)
+      .send({ from: account, value: tokenPrice });
+    console.log(tx);
+  };
+
+  // todo: don't copy code
+  const connectWallet = async () => {
+    if (!account) {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      await setAccount(accounts[0]);
+      listenForAccountChanged();
+    }
+  };
+
+  const listenForAccountChanged = () => {
+    window.ethereum.on("accountsChanged", handleAccountChanged);
+    function handleAccountChanged(account: string) {
+      if (account.length > 0) {
+        setAccount(account[0]);
+      } else {
+        setAccount(undefined);
+      }
+    }
   };
 
   return (
@@ -166,7 +207,9 @@ export function Unseal() {
               Power by{" "}
               <a target={"_blank"} href="https://github.com">
                 Seal Blog
-              </a>
+              </a>{" "}
+              {"can't decrypt? you need to subscribe first!"}{" "}
+              <button onClick={subscribe}>subscribe</button>
             </div>
           </div>
         </Grid>

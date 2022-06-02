@@ -280,7 +280,7 @@ export async function unseal() {
     throw new Error("hashId not found");
   }
 
-  const api = new Api();
+  const api = new Api("https://api.underplay.xyz");
   const decryptText = await decryptArticle(s, account, hashId, pk, api);
   if (decryptText != null) {
     replaceEncryptText(decryptText);
