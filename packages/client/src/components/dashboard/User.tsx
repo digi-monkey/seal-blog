@@ -50,7 +50,6 @@ export function User() {
     <div style={styles.root}>
       <Account accountCallback={setAccount} />
       <hr />
-      <Heading>NFT</Heading>
       <Token account={account}></Token>
       <Button onClick={write} width={{ xs: "full", md: "full" }}>
         Write

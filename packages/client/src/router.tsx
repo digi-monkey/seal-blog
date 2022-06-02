@@ -4,6 +4,7 @@ import { Intro } from "./components/nft/Intro";
 import { Unseal } from "./components/dashboard/Unseal";
 import { Write } from "./components/dashboard/Write";
 import { User } from "./components/dashboard/User";
+import { Home } from "./components/home/Home";
 
 export default function MyRouter() {
   return (
@@ -20,6 +21,9 @@ export default function MyRouter() {
         </Route>
         <Route path="/nft">
           <Intro />
+        </Route>
+        <Route path="/">
+          <Home />
         </Route>
       </Switch>
     </BrowserRouter>

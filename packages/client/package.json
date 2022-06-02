@@ -42,9 +42,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "serve": "serve -s build",
-    "static-deploy": "yarn build && pm2 serve build 9111 --spa",
-    "deploy": "node server.js",
+    "serve:pm2": "pm2 start yarn --interpreter bash --name seal-web -- serve",
+    "serve": "node server.js",
     "lint": "eslint -c ../../.eslintrc.js \"src/*.ts\" \"src/**/*.ts\" \"src/**/*.tsx\" \"src/*.tsx\"",
     "fmt": "prettier --write src/**/*.ts src/**/*.tsx server.js package.json"
   },

@@ -1,47 +1,19 @@
 seal-blog
 ===
 
-one line javascript code to make your web2 blog WEB3.
+one line javascript code to make your blog WEB3.
 
 > Make Blog Cool Again
 
-turn your personal blog post encrypted and only readable with NFT membership token holder. the NFT is lived on Godwoken blockchain, the layer2 rollup of ckb network.
+turn your personal blog post encrypted and only readable with NFT membership token holder.
 
 How to run
 ---
 
-start server:
+add `.env` (take `.env.example` for ref) in sub-packages like client/server, and then run
 
 ```sh
-$ cat > ./packages/server/.env <<EOF
-PORT=<your api server listen port>
-BLOCKCHAIN_NETWORK=<"devnet", "testnet" or "mainnet">
-EOF
-```
-
-```sh
-yarn workspace @seal-blog/server web
-```
-
-start client:
-
-````sh
-$ cat > ./.env <<EOF
-PORT=<"UI port">
-EOF
-```
-
-change your config at `src/api/env-config.ts`:
-
-```sh
-export const envConfig = {
-  mode: "production",
-  networkType: "testnet",
-  blogTitle: "Web3 Blog",
-  blogDescription: "Web3 Blog",
-};
-```
-
-```sh
-yarn workspace @seal-blog/client start
+yarn
+yarn build
+yarn start
 ```

@@ -6,11 +6,5 @@
     "client_url": {
         "production": "https://underplay.xyz",
         "development": "http://localhost:3000" 
-    },
-    "arweave": {
-        "base_node": "https://arweave.net"
-    },
-    "blog": {
-        
     }
 }

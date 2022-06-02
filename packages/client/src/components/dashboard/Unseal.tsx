@@ -19,7 +19,6 @@ const styles = {
     background: "#FCFDFB",
     minHeight: "80vh",
     borderRadius: "25px",
-    boxShadow: "2px 2px 2px 2px black",
   },
   leftSide: {
     padding: "6em",
@@ -38,6 +37,7 @@ const styles = {
   },
   content: {
     marginTop: "4em",
+    minHeight: "50vh",
   },
   homeAvatar: {
     width: "150px",
@@ -77,6 +77,26 @@ const styles = {
     border: "1px solid blue",
     margin: "5px 5px",
     cursor: "pointer",
+  },
+  heading: {
+    color: "rgb(236, 236, 236)",
+    fontSize: "40px",
+  },
+  hr: {
+    height: "1px",
+    backgroundColor: "rgb(236, 236, 236)",
+    border: "none",
+  },
+  gridBg: {
+    background: "#FCFDFB",
+    backgroundImage:
+      "linear-gradient(rgb(236, 236, 236) 1px, transparent 0), linear-gradient(90deg, rgb(236, 236, 236) 1px, transparent 0), linear-gradient(white 1px, transparent 0), linear-gradient(90deg, white 1px, transparent 0)",
+    backgroundSize: `
+      30px 30px,
+      30px 30px,
+      75px 75px,
+      75px 75px
+    `,
   },
 };
 
@@ -127,10 +147,14 @@ export function Unseal() {
               <ReactLoading type={"balls"} color="#000" />
             </Stack>
           )}
+          <div style={styles.heading}>
+            <span style={styles.heading}>Reading</span>
+            <hr style={styles.hr} />
+          </div>
 
           <p>
             {isRawArticleLoadFailed
-              ? "Failed to load raw article from arweave transaction, try refresh pages later."
+              ? "Failed to load raw article, try refresh pages later."
               : ""}
           </p>
           <div style={styles.content}>
@@ -141,11 +165,12 @@ export function Unseal() {
             <div style={styles.footnoteLink}>
               Power by{" "}
               <a target={"_blank"} href="https://github.com">
-                Seal
+                Seal Blog
               </a>
             </div>
           </div>
         </Grid>
+        <Grid item xs={3}></Grid>
       </Grid>
     </div>
   );

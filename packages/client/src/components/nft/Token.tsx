@@ -117,8 +117,8 @@ export function Token(props: NftManagerProp) {
 
   return (
     <div>
-      <Card style={{ padding: "10px", margin: "20px 0" }}>
-        <h1>Your Readership Token</h1>
+      <Card style={{ padding: "10px", margin: "20px 0", borderRadius: "5px" }}>
+        <h1>Your Readership NFT</h1>
         {isDeployed && (
           <div>
             <Text>

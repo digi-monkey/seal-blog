@@ -8,7 +8,7 @@ import "degen/dist/style.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider defaultMode="light" defaultAccent="foreground">
+    <ThemeProvider defaultMode="light" defaultAccent="blue">
       <MyRouter />
     </ThemeProvider>
   </React.StrictMode>,

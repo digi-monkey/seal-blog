@@ -1,6 +1,6 @@
 export const envConfig = {
-  mode: "development",
-  networkType: "devnet",
-  blogTitle: "Seal Blog",
-  blogDescription: "Seal Web3 Blog",
+  mode: process.env.REACT_APP_MODE,
+  networkType: process.env.REACT_APP_BLOCKCHAIN_NETWORK,
+  siteTitle: process.env.REACT_APP_SITE_TITLE,
+  siteDescription: process.env.REACT_APP_SITE_DESCRIPTION,
 };

@@ -12,7 +12,7 @@ export const SPLITTER_REGEX =
 export const SPLITTER_HTML_REGEX =
   /\<(.)+\>······click(.)+unseal?(.)+postId=0x(.)+to read encrypted content. Power By (.)+SealBlog<\/a>·······\<\/[a-zA-Z0-9]+\>/;
 
-export const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ unseal ~~~~~~~~~~~";
+export const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ / ᵒᴥᵒᶅ ~~~~~~~~~~~";
 
 export function getFullMatchSealedSplitter(
   postId: string,
