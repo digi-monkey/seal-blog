@@ -9,7 +9,7 @@
     "fmt": "prettier --write src/**/*.ts \"src/*.ts\" tests/*.ts package.json",
     "lint": "eslint -c ../../.eslintrc.js \"src/**/*.ts\" \"src/*.ts\" \"tests/**/*.ts\"",
     "build": "tsc",
-    "serve:pm2": "pm2 start yarn --interpreter bash --name seal-web -- serve",
+    "serve:pm2": "pm2 start yarn --interpreter bash --name seal-api -- serve",
     "serve": "node lib/index.js"
   },
   "ava": {
