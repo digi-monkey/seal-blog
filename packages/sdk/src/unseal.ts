@@ -40,13 +40,13 @@ export function getEncryptedContent() {
 export async function decryptArticle(
   encryptedText: string,
   account: string,
-  hashId: string,
+  postId: string,
   pk: string,
   api: Api
 ) {
   let envelop;
   try {
-    envelop = (await api.getEnvelopByPostIdAndPk(hashId, pk)).envelop;
+    envelop = (await api.getEnvelopByPostIdAndPk(postId, pk)).envelop;
     console.log(envelop);
   } catch (error: any) {
     alert(
@@ -275,13 +275,13 @@ export async function unseal() {
     throw new Error("account == null || pk == null");
   }
 
-  const hashId = getPostId();
-  if (hashId == null) {
-    throw new Error("hashId not found");
+  const postId = getPostId();
+  if (postId == null) {
+    throw new Error("postId not found");
   }
 
   const api = new Api("https://api.underplay.xyz");
-  const decryptText = await decryptArticle(s, account, hashId, pk, api);
+  const decryptText = await decryptArticle(s, account, postId, pk, api);
   if (decryptText != null) {
     replaceEncryptText(decryptText);
   }

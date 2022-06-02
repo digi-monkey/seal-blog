@@ -6,7 +6,7 @@ import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
-import { contractFactory } from "../../api/web3";
+import { contractFactory, getFirstTokenId } from "../../api/web3";
 import web3Utils from "web3-utils";
 
 import "@seal-blog/sdk/lib/js-script";
@@ -118,17 +118,26 @@ export function Unseal() {
     useState<boolean>(false);
   const [isRawArticleLoadFailed, setIsRawArticleLoadFailed] =
     useState<boolean>(false);
+
   const [contractAddress, setContractAddress] = useState<string>();
   const [account, setAccount] = useState<string>();
+  const [encryptionPublicKey, setEncryptionPublicKey] = useState<string>();
 
   useEffect(() => {
     loadRawArticle();
     connectWallet();
+
     const addr = web3Utils.toChecksumAddress(
       "0x" + postId.slice(2).slice(16, 56)
     );
     setContractAddress(addr);
   }, []);
+
+  useEffect(() => {
+    if (account != null) {
+      getEncryptionPublicKey(account);
+    }
+  }, [account]);
 
   const loadRawArticle = async () => {
     setIsRawArticleLoading(true);
@@ -147,7 +156,11 @@ export function Unseal() {
   };
 
   const subscribe = async () => {
-    contractFactory.options.address = contractAddress!;
+    if (contractAddress == null) {
+      return alert("contract address is null!");
+    }
+
+    contractFactory.options.address = contractAddress;
     const tokenPrice = await contractFactory.methods.tokenPrice().call();
     console.log(tokenPrice);
     const tx = await contractFactory.methods
@@ -156,7 +169,23 @@ export function Unseal() {
     console.log(tx);
   };
 
-  // todo: don't copy code
+  const setPk = async () => {
+    if (contractAddress == null) {
+      return alert("contract address is null!");
+    }
+    if (account == null) {
+      return alert("account address is null!");
+    }
+
+    contractFactory.options.address = contractAddress;
+    const tokenId = await getFirstTokenId(contractFactory, account);
+    const tx = await contractFactory.methods
+      .setEncryptPublicKey(tokenId, encryptionPublicKey)
+      .send({ from: account });
+    console.log(tx);
+  };
+
+  // todo: refactor, don't copy code from account.tsx
   const connectWallet = async () => {
     if (!account) {
       const accounts = await window.ethereum.request({
@@ -175,6 +204,36 @@ export function Unseal() {
       } else {
         setAccount(undefined);
       }
+    }
+  };
+
+  const getEncryptionPublicKey = async (account: string) => {
+    const encryptionPublicKey =
+      localStorage.getItem(account) ||
+      (await requestEncryptionPublicKeyFromMetamask(account));
+    await setEncryptionPublicKey(encryptionPublicKey);
+    return encryptionPublicKey;
+  };
+
+  const requestEncryptionPublicKeyFromMetamask = async (account: string) => {
+    if (
+      window.confirm(
+        "we want to store your signing publicKey on browser for connivent, good?"
+      )
+    ) {
+      // Save it
+      const pk = (await window.ethereum.request({
+        method: "eth_getEncryptionPublicKey",
+        params: [account], // you must have access to the specified account
+      })) as string;
+      localStorage.setItem(account, pk);
+      return pk;
+    } else {
+      // Do nothing!
+      alert(
+        "will not store on browser, will ask your metamask each time you need it."
+      );
+      return undefined;
     }
   };
 
@@ -208,8 +267,9 @@ export function Unseal() {
               <a target={"_blank"} href="https://github.com">
                 Seal Blog
               </a>{" "}
-              {"can't decrypt? you need to subscribe first!"}{" "}
-              <button onClick={subscribe}>subscribe</button>
+              {"can't decrypt? you need to subscribe and set pk first!"}{" "}
+              <button onClick={subscribe}>subscribe</button>{" "}
+              <button onClick={setPk}>set pk</button>
             </div>
           </div>
         </Grid>
