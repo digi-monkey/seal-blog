@@ -1,5 +1,4 @@
-import { BlockchainNetwork } from "@seal-blog/sdk";
-import CONFIG from "./contracts/config.json";
+import CONFIG from "./blockchain/config.json";
 import { env } from "process";
 require("dotenv").config();
 
@@ -21,21 +20,7 @@ function _getOptional(name: string): string | undefined {
   return env[name];
 }
 
-export const getBlockchainNetwork = () => {
-  const networkType = envConfig.networkType;
-  switch (networkType) {
-    case "devnet":
-      return BlockchainNetwork.devnet;
-    case "testnet":
-      return BlockchainNetwork.testnet;
-    case "mainnet":
-      return BlockchainNetwork.mainnet;
-    default:
-      return BlockchainNetwork.devnet;
-  }
-};
-
-export const getBlockchainNetworkUrl = () => {
+export const getConfigBlockchainNetwork = () => {
   const networkType = envConfig.networkType;
   switch (networkType) {
     case "devnet":
@@ -49,4 +34,4 @@ export const getBlockchainNetworkUrl = () => {
   }
 };
 
-export const networkUrl = getBlockchainNetworkUrl();
+export const configNetworkUrl = getConfigBlockchainNetwork().rpc;

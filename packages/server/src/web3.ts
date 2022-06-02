@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
-import { networkUrl } from "./env-config";
-import CONTRACT_ARTIFACTS from "./contracts/contract-artifact.json";
+import { configNetworkUrl } from "./configs/env-config";
+import CONTRACT_ARTIFACTS from "./configs/blockchain/contract-artifact.json";
 
-export const provider = new ethers.providers.JsonRpcProvider(networkUrl);
+export const provider = new ethers.providers.JsonRpcProvider(configNetworkUrl);
 
 export const Contract = new ethers.ContractFactory(
   CONTRACT_ARTIFACTS.abi,

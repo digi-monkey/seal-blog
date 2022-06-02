@@ -1,11 +1,11 @@
-import ContractArtifact from "../contracts/contract-artifact.json";
-import CONFIG from "../contracts/config.json";
+import ContractArtifact from "../configs/blockchain/contract-artifact.json";
+import CONFIG from "../configs/blockchain/config.json";
 import { envConfig } from "../configs/env-config";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract";
 
-export const getBlockchainNetworkUrl = () => {
+export const getConfigBlockchainNetwork = () => {
   const networkType = envConfig.networkType;
   switch (networkType) {
     case "devnet":
@@ -19,11 +19,13 @@ export const getBlockchainNetworkUrl = () => {
   }
 };
 
-export const networkUrl = getBlockchainNetworkUrl();
+export const configChain = getConfigBlockchainNetwork();
+export const configChainRpcUrl = configChain.rpc;
+export const configChainId = configChain.chainId;
 
 export const CONTRACT_ARTIFACT = ContractArtifact;
 
-export const web3 = new Web3(Web3.givenProvider || networkUrl);
+export const web3 = new Web3(Web3.givenProvider || configChainRpcUrl);
 export const contractFactory = new web3.eth.Contract(
   CONTRACT_ARTIFACT.abi as AbiItem[]
 );

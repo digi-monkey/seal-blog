@@ -18,7 +18,7 @@ import {
   parsePostId,
 } from "@seal-blog/sdk";
 import { provider, ZERO_ADDRESS } from "../web3";
-import CONTRACT_ARTIFACTS from "../contracts/contract-artifact.json";
+import CONTRACT_ARTIFACTS from "../configs/blockchain/contract-artifact.json";
 import { ethers } from "ethers";
 
 const service_name = `Seal Api Server`;

@@ -1,0 +1,37 @@
+{
+  "polyjuice": {
+    "mainnet": {
+      "chainId": "fill me later",
+      "rpc": "fill me later",
+      "chainName": "Godwoken - Mainnet",
+      "nativeCurrency": {
+        "name": "Godwoken",
+        "symbol": "CKB",
+        "decimals": 18
+      },
+      "blockExplorerUrl": "fill me later"
+    },
+    "testnet": {
+      "chainId": "0x116e9",
+      "rpc": "https://godwoken-testnet-v1.ckbapp.dev",
+      "chainName": "Godwoken - Testnet",
+      "nativeCurrency": {
+        "name": "Godwoken",
+        "symbol": "CKB",
+        "decimals": 18
+      },
+      "blockExplorerUrl": "https://v1.aggron.gwscan.com/"
+    },
+    "devnet": {
+      "chainId": "0x116e8",
+      "rpc": "http://localhost:8024",
+      "chainName": "Godwoken - Devnet",
+      "nativeCurrency": {
+        "name": "Godwoken",
+        "symbol": "CKB",
+        "decimals": 18
+      },
+      "blockExplorerUrl": null
+    }
+  }
+}

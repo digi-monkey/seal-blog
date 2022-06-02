@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, IconUserSolid, IconWallet, Stack } from "degen";
 import { Grid } from "@material-ui/core";
+import { configChainId, configChainRpcUrl, configChain } from "../../api";
 
 const styles = {
   siteName: {
@@ -86,6 +87,7 @@ export function Account(prop: AccountProp) {
         method: "net_version",
       });
       await setChainId(chainId);
+      await requestNetwork();
       listenForChainChanged();
     }
   };
@@ -124,6 +126,40 @@ export function Account(prop: AccountProp) {
         "will not store on browser, will ask your metamask each time you need it."
       );
       return undefined;
+    }
+  };
+
+  const requestNetwork = async () => {
+    if (chainId === configChainId) return;
+
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: configChainId }],
+      });
+    } catch (e: any) {
+      if (e.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: configChainId,
+                chainName: configChain.chainName,
+                nativeCurrency: {
+                  name: configChain.nativeCurrency.name,
+                  symbol: configChain.nativeCurrency.symbol, // 2-6 characters long
+                  decimals: configChain.nativeCurrency.decimals,
+                },
+                blockExplorerUrls: [],
+                rpcUrls: [configChainRpcUrl],
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error(addError);
+        }
+      }
     }
   };
 
