@@ -20,6 +20,7 @@ export const getConfigBlockchainNetwork = () => {
 };
 
 export const configChain = getConfigBlockchainNetwork();
+console.log(envConfig.networkType, configChain);
 export const configChainRpcUrl = configChain.rpc;
 export const configChainId = configChain.chainId;
 
