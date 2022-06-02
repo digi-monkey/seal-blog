@@ -73,15 +73,16 @@ export function Intro() {
                   of that NFT token.{" "}
                 </li>
                 <li>
-                  4. all article contents are stored encrypted on Arweave
-                  blockchain. and the smart-contract are hold on Nervos Godwoken
-                  L2 network.
-                </li>
-                <li>
-                  5. bonus: when you buy NFT token, you will mint a unique
+                  4. bonus: when you buy NFT token, you will mint a unique
                   avatar as well!
                 </li>
               </ul>
+            </Text>
+            <Text>
+              use this for deposit:{" "}
+              <a href="https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1">
+                light godwoken
+              </a>
             </Text>
           </div>
         </Box>
