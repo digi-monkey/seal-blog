@@ -1,3 +1,5 @@
+const { version: defaultVersion } = require("../package.json");
+
 export const WRITE_SEAL_SPLITTER = "---seal---"; // writer use this splitter to denote which content he/she wants to seal
 
 export const SEALED_SPLITTER_REGEX =
@@ -17,7 +19,7 @@ export const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ / ᵒᴥᵒᶅ ~~~~~~~~~~~";
 export function getFullMatchSealedSplitter(
   postId: string,
   decryptUrl: string,
-  version: string = "v0.1.0"
+  version: string = defaultVersion
 ) {
   return `\n\n······click [here](${decryptUrl}?version=${version}&postId=${postId}) to read encrypted content. Power By [SealBlog]()·······\n\n`;
 }
