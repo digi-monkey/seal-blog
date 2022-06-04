@@ -171,7 +171,7 @@ export function replaceSealSplitter() {
   });
 }
 
-export function addDecryptButton() {
+export function addDecryptButton(rpc: string) {
   let isSuccess = false;
   const originNode = findFirstSealSplitterNode();
   if (originNode == null) {
@@ -185,7 +185,9 @@ export function addDecryptButton() {
       const node = nodes[0];
       const btn = document.createElement("button");
       btn.innerText = "decrypt";
-      btn.onclick = unseal;
+      btn.onclick = () => {
+        unseal(rpc);
+      };
 
       const aLink = findNodesWithSubText(node, "here")[0];
       if (aLink == null || aLink.parentElement == null) {
@@ -197,7 +199,7 @@ export function addDecryptButton() {
         function (e) {
           e.preventDefault();
           e.stopPropagation();
-          unseal();
+          unseal(rpc);
           return false;
         },
         false
@@ -263,7 +265,7 @@ export function findSpecificNode(
   return result;
 }
 
-export async function unseal() {
+export async function unseal(rpc: string) {
   if (document.readyState != "complete") {
     return alert("page not load yet, please wait.");
   }
@@ -280,7 +282,7 @@ export async function unseal() {
     throw new Error("postId not found");
   }
 
-  const api = new Api("https://api.underplay.xyz");
+  const api = new Api(rpc);
   const decryptText = await decryptArticle(s, account, postId, pk, api);
   if (decryptText != null) {
     replaceEncryptText(decryptText);
