@@ -139,7 +139,6 @@ export class MainService extends Service {
       const pk = await accessToken.encryptPublicKeys(tokenId);
       pks.push(pk);
     }
-    console.log("pks:", pks);
     const envelopPromise = pks.map(async (pk) => {
       const _envelop: string = await encryptAesKeyAndIv(pk, key, iv);
       const envelop: Envelop = {
@@ -207,8 +206,6 @@ export class MainService extends Service {
       throw new Error(`contract not found, account: ${postId}`);
     }
 
-    console.log(postObj);
-
     return postObj.contractAddress;
   }
 
@@ -224,7 +221,6 @@ export class MainService extends Service {
       r.createdTs = r._id.getTimestamp();
       return r;
     });
-    logger.info(res);
     return res;
   }
 }

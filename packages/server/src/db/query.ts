@@ -61,7 +61,6 @@ export class Query {
       isNullable,
       sort
     );
-    console.log(res);
     return res.at(0);
   }
 

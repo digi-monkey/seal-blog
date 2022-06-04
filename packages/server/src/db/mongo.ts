@@ -1,4 +1,5 @@
 import { Collection, Db, MongoClient, Document } from "mongodb";
+import { logger } from "../logger";
 
 const defaultUrl = "mongodb://localhost:27017";
 const defaultDbName = "seal-blogblog";
@@ -73,12 +74,12 @@ export class Database {
   async load(): Promise<Db> {
     try {
       await this.client.connect();
-      console.log("Connected successfully to MongoDB!");
+      logger.info("Connected successfully to MongoDB!");
       const db = this.client.db(this.dbName);
       return db;
     } catch (error: any) {
-      console.log(error);
-      throw new Error(error.message);
+      logger.error(error.message);
+      throw error;
     }
   }
 

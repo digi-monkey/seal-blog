@@ -3,6 +3,7 @@ import cors from "cors";
 import { MainService } from "./services/main";
 import { setUpRouters } from "./http-server";
 import { database } from "./db";
+import { logger } from "./logger";
 
 export const app = express();
 const corsOptions = {
@@ -22,7 +23,7 @@ const port = process.env.PORT || 3000;
 export async function start() {
   await database.load();
   app.listen(port, () => {
-    console.log(`${service.name} started at http://localhost:${port}`);
+    logger.info(`${service.name} started at http://localhost:${port}`);
   });
 }
 
