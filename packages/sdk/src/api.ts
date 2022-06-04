@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Base64Str, HexStr } from "./types";
+const { version } = require("../package.json");
 
 export const DEFAULT_API_URL = "http://localhost:9112";
 
@@ -16,9 +17,13 @@ export enum HttpProtocolMethod {
 }
 export type HttpRequest = (
   method: string,
-  params?: object,
+  params?: Params,
   type?: HttpProtocolMethod
 ) => Promise<any>;
+
+export interface Params {
+  [key: string]: any;
+}
 
 export class base {
   url: string;
@@ -32,16 +37,17 @@ export class base {
   newHttpRequest() {
     return async (
       method: string,
-      params: Object = {},
+      _params: Params = {},
       type: HttpProtocolMethod = HttpProtocolMethod.get,
       cfg: {} = {}
     ) => {
       const baseUrl = this.url;
+      const params = { ..._params, version };
       let axiosRes;
       switch (type) {
         case HttpProtocolMethod.get:
           axiosRes = await axios.get(`${baseUrl}/${method}`, {
-            params: params,
+            params,
             ...cfg,
           });
           break;

@@ -1,5 +1,5 @@
 import { Service } from "./services/base";
-import { Application } from "express";
+import { Application, Request, Response } from "express";
 import { logger } from "./logger";
 
 export enum HttpProtocolMethod {
@@ -8,7 +8,13 @@ export enum HttpProtocolMethod {
   all = "POST, GET",
   option = "OPTION",
 }
-export type HttpRequestCallMethod = (req: any, res: any) => any;
+export type HttpRequestCallMethod = (req: Request, res: Response) => any;
+
+export interface ApiResponse {
+  status: string;
+  data?: any;
+  error?: any;
+}
 
 export enum SpecialRouterHeader {
   dynamic = "dynamic_router_",
@@ -29,24 +35,23 @@ export const setUrlTargetMethod = async (
   app: Application,
   target: string,
   method: HttpRequestCallMethod,
-  request_type: HttpProtocolMethod = HttpProtocolMethod.get
+  requestType: HttpProtocolMethod = HttpProtocolMethod.get
 ) => {
   const url = `/${target}`;
-  const executeMethod = async (
-    req: any,
-    res: { send: (arg0: { status: string; data?: any; error?: any }) => void }
-  ) => {
-    logger.debug(`${request_type} ${url}`);
+  const executeMethod = async (req: Request, res: Response) => {
+    const version = getRequestVersion(requestType, req);
+    logger.debug(`${requestType} ${url} v${version}`);
     try {
       const return_data = await method(req, res);
-      res.send({ status: "ok", data: return_data });
-      //res.send(return_data); // just render
+      const apiRes: ApiResponse = { status: "ok", data: return_data };
+      res.send(apiRes);
     } catch (error: any) {
       logger.error(`${error.message}`);
-      res.send({ status: "failed", error: error.message });
+      const apiRes: ApiResponse = { status: "failed", error: error.message };
+      res.send(apiRes);
     }
   };
-  switch (request_type) {
+  switch (requestType) {
     case HttpProtocolMethod.get:
       app.get(url, async (req: any, res: any) => {
         await executeMethod(req, res);
@@ -88,7 +93,7 @@ export const setUpRouters = async (
 
     const httpType =
       (service as any)[name].httpProtocolMethod || HttpProtocolMethod.get;
-    logger.info(`setup url => /${url}, [ ${httpType} ]`);
+    logger.debug(`setup url => /${url}, [ ${httpType} ]`);
     switch (httpType) {
       case HttpProtocolMethod.get:
         await setUrlTargetMethod(app, url, method, HttpProtocolMethod.get);
@@ -124,4 +129,22 @@ export function allowType(value: HttpProtocolMethod = HttpProtocolMethod.get) {
   return function (target: any, name: any, _descriptor: any) {
     target[name].httpProtocolMethod = value;
   };
+}
+
+export function getRequestVersion(
+  httpMethod: HttpProtocolMethod,
+  req: Request
+) {
+  httpMethod === HttpProtocolMethod.get
+    ? req.query.version
+    : req.body.data.version;
+  switch (httpMethod) {
+    case HttpProtocolMethod.get:
+      return req.query.version;
+
+    case HttpProtocolMethod.post:
+      return req.body.data.version;
+    default:
+      throw new Error(`unsupported http method ${httpMethod}`);
+  }
 }
