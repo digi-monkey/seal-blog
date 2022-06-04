@@ -1,9 +1,12 @@
 // usage:
 // <script src=".." rpc="" maxRetry=""></script>
 import { addDecryptButton } from "./unseal";
+import { normalizeUrl } from "./helper";
 
-const RPC: string =
-  document.currentScript?.getAttribute("rpc") || "https://api.underplay.xyz";
+const RPC: string = normalizeUrl(
+  document.currentScript?.getAttribute("rpc") || "https://api.underplay.xyz"
+);
+
 const MAX_RETRY: number = +(
   document.currentScript?.getAttribute("maxRetry") || 20
 );
