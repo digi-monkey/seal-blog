@@ -10,8 +10,17 @@
     "lint": "eslint -c ../../.eslintrc.js \"src/**/*.ts\" \"src/*.ts\" \"tests/**/*.ts\"",
     "build": "tsc",
     "bundle": "webpack",
-    "web": "ts-node-dev src/view.ts"
+    "web": "ts-node-dev src/view.ts",
+    "publish": "yarn build && yarn bundle && yarn publish"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "/lib",
+    "/bundle"
+  ],
   "ava": {
     "extensions": [
       "js",
