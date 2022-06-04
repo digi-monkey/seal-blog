@@ -16,3 +16,11 @@ export function formatGibberish(encryptedText: string) {
 
   return paragraphs.map((p) => p.join(" ")).join("\n\n");
 }
+
+export function normalizeUrl(url: string): string {
+  if (url.length === 1) {
+    throw new Error("invalid url");
+  }
+
+  return url.endsWith("/") ? normalizeUrl(url.slice(0, url.length - 1)) : url;
+}

@@ -214,6 +214,7 @@ export function addDecryptButton(rpc: string) {
 
 export function findFirstSealSplitterNode() {
   const match = document.body.innerHTML.match(SPLITTER_HTML_REGEX);
+
   if (!match || match.length === 0) {
     return undefined;
   }
