@@ -6,13 +6,13 @@ export const SEALED_SPLITTER_REGEX =
   /(\s)+······click \[here(.)+to read encrypted content. Power By \[SealBlog\]\([^·]+·······(\s)+/g;
 
 export const SEAL_CONTENT_MATCH_REGEX =
-  /(\s)+······click here(.)+to read encrypted content. Power By SealBlog(.)+(\s)+[\s\S]+Power By SealBlog·······/;
+  /(\s)*······click[\s]here(.)+to[\s]read[\s]encrypted[\s]content.[\s]Power[\s]By[\s]SealBlog(.)+(\s)+[\s\S]+Power[\s]By[\s]SealBlog·······/;
 
 export const SPLITTER_REGEX =
   "\n\n······click here to read encrypted content. Power By SealBlog·······";
 
 export const SPLITTER_HTML_REGEX =
-  /\<(.)+\>······click(.)+unseal?(.)+postId=0x(.)+to read encrypted content. Power By (.)+SealBlog<\/a>·······\<\/[a-zA-Z0-9]+\>/;
+  /\<(.)+\>······click(.)+unseal?(.)+postId=0x(.)+to[\s]read[\s]encrypted[\s]content.[\s]Power[\s]By(.)+SealBlog<\/a>·······\<\/[a-zA-Z0-9]+\>/;
 
 export const UNSEAL_SPLITTER_TEXT = "~~~~~~~~~~~ / ᵒᴥᵒᶅ ~~~~~~~~~~~";
 
