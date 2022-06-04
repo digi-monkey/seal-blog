@@ -1,6 +1,6 @@
 {
   "name": "@seal-blog/server",
-  "version": "0.1.0",
+  "version": "0.1.0-rc1",
   "license": "MIT",
   "main": "src/index",
   "scripts": {
@@ -22,7 +22,7 @@
     ]
   },
   "dependencies": {
-    "@seal-blog/sdk": "0.1.0",
+    "@seal-blog/sdk": "0.1.0-rc1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "ethers": "^5.6.7",
