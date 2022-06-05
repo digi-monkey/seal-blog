@@ -1,6 +1,6 @@
 {
   "name": "seal-blog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "private": true,
   "workspaces": [
@@ -15,7 +15,10 @@
     "fmt": "yarn workspaces run fmt",
     "lint": "yarn workspaces run lint",
     "build": "yarn workspaces run build",
-    "web": "yarn workspace @seal-blog/server ts-node-dev src/view.ts"
+    "web": "yarn workspace @seal-blog/server ts-node-dev src/view.ts",
+    "artifact:server": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/server/src/configs/blockchain/contract-artifact.json",
+    "artifact:client": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/client/src/configs/blockchain/contract-artifact.json",
+    "artifact": "yarn artifact:server && yarn artifact:client"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",
