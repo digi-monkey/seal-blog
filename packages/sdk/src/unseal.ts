@@ -182,30 +182,25 @@ export function addDecryptButton(rpc: string) {
   document.body.childNodes.forEach((n) => {
     const nodes = findSpecificNode(n, originNode);
     if (nodes.length > 0) {
-      const node = nodes[0];
-      const btn = document.createElement("button");
-      btn.innerText = "decrypt";
-      btn.onclick = () => {
-        unseal(rpc);
-      };
+      nodes.forEach((n) => {
+        const aLink = findNodesWithSubText(n, "here")[0];
+        if (aLink == null || aLink.parentElement == null) {
+          return console.log("no here text found");
+        }
 
-      const aLink = findNodesWithSubText(node, "here")[0];
-      if (aLink == null || aLink.parentElement == null) {
-        return console.log("no here text found");
-      }
+        aLink.parentElement.addEventListener(
+          "click",
+          function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            unseal(rpc);
+            return false;
+          },
+          false
+        );
 
-      aLink.parentElement.addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          unseal(rpc);
-          return false;
-        },
-        false
-      );
-
-      isSuccess = true;
+        isSuccess = true;
+      });
     }
   });
 
@@ -254,7 +249,6 @@ export function findSpecificNode(
   targetNode: Node,
   result: ChildNode[] = []
 ): ChildNode[] {
-  //console.log("n", n, "targetNode", targetNode, "Result", n.isEqualNode(targetNode));
   if (n.isEqualNode(targetNode)) {
     result.push(n);
   }
@@ -272,7 +266,6 @@ export async function unseal(rpc: string) {
   }
 
   const s = getEncryptedContent();
-  console.log(s);
   const { account, pk } = await getAccountAndPk();
   if (account == null || pk == null) {
     throw new Error("account == null || pk == null");
