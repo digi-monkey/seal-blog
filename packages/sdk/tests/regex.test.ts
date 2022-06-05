@@ -1,5 +1,9 @@
 import test from "ava";
-import { SEAL_CONTENT_MATCH_REGEX, SPLITTER_HTML_REGEX } from "../src/regex";
+import {
+  SEAL_CONTENT_MATCH_REGEX,
+  SPLITTER_HTML_REGEX,
+  SPLITTER_REGEX,
+} from "../src/regex";
 
 test("blogger", async (t) => {
   global.document = {
@@ -21,5 +25,14 @@ test("blogger", async (t) => {
   {
     const match = document.body.innerText.match(SEAL_CONTENT_MATCH_REGEX);
     t.true(match != null);
+  }
+
+  {
+    const s = document.body.innerText.match(SEAL_CONTENT_MATCH_REGEX);
+    if (!s || s.length <= 0) return t.fail("s.length is 0");
+
+    const match = s[0].split(SPLITTER_REGEX)[1]?.replace(/\s/g, "");
+    const expectStr = "vfHT8exYDAySKKfLXcsMnA==";
+    t.is(match, expectStr);
   }
 });
