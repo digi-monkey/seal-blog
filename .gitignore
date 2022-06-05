@@ -111,10 +111,14 @@ core
 
 articles/
 lib/
+build/
 bundle/
 
-packages/client/node_modules
-packages/client/lib
-packages/client/build
-packages/server/node_modules
-packages/server/lib
+coverage
+coverage.json
+typechain
+#Hardhat files
+cache
+artifacts
+avatars
+history
