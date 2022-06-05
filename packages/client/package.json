@@ -1,6 +1,6 @@
 {
   "name": "@seal-blog/client",
-  "version": "0.1.0-rc2",
+  "version": "0.1.0-rc3",
   "private": true,
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -26,7 +26,7 @@
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
     "@metamask/onboarding": "^1.0.0",
-    "@seal-blog/sdk": "0.1.0-rc2",
+    "@seal-blog/sdk": "0.1.0-rc3",
     "babylonjs-hook": "^0.1.0",
     "crypto-js": "^4.1.1",
     "degen": "^0.0.9",

@@ -1,6 +1,6 @@
 {
   "name": "seal-blog",
-  "version": "0.1.0-rc2",
+  "version": "0.1.0-rc3",
   "license": "MIT",
   "private": true,
   "workspaces": [
