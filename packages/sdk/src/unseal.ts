@@ -182,22 +182,20 @@ export function addDecryptButton(rpc: string) {
   document.body.childNodes.forEach((n) => {
     const nodes = findSpecificNode(n, originNode);
     if (nodes.length > 0) {
+      const clickHandler = function (e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        unseal(rpc);
+        return false;
+      };
+
       nodes.forEach((n) => {
         const aLink = findNodesWithSubText(n, "here")[0];
         if (aLink == null || aLink.parentElement == null) {
           return console.log("no here text found");
         }
 
-        aLink.parentElement.addEventListener(
-          "click",
-          function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            unseal(rpc);
-            return false;
-          },
-          false
-        );
+        aLink.parentElement.addEventListener("click", clickHandler, false);
 
         isSuccess = true;
       });
