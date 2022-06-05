@@ -1,6 +1,6 @@
 {
   "name": "@seal-blog/sdk",
-  "version": "0.1.0-rc2.6",
+  "version": "0.1.0-rc3",
   "license": "MIT",
   "main": "lib/index",
   "scripts": {
