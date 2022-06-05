@@ -1,6 +1,7 @@
 import { TextField } from "@material-ui/core";
 import { Button, Stack, IconUpload } from "degen";
 import React, { useEffect, useReducer, useState } from "react";
+import ReactDOMServer from "react-dom/server";
 import {
   Api,
   sealPost,
@@ -79,10 +80,21 @@ export function Write() {
     setFormInput({ [name]: newValue });
   };
 
-  const copySealedPost = async () => {
-    /* Copy the text inside the text field */
+  const copySealedPostMarkdown = async () => {
+    /* Copy the markdown text inside the text field */
     setTimeout(async () => {
       await navigator.clipboard.writeText(post);
+      alert("copy text!");
+    }, 300);
+  };
+
+  const copySealedPostHtml = async () => {
+    const content = <ReactMarkdown>{post}</ReactMarkdown>;
+    /* Copy the html text inside the text field */
+    setTimeout(async () => {
+      await navigator.clipboard.writeText(
+        ReactDOMServer.renderToStaticMarkup(content)
+      );
       alert("copy text!");
     }, 300);
   };
@@ -130,8 +142,11 @@ export function Write() {
           <div>
             <p>
               {" "}
-              <button onClick={copySealedPost}>Copy</button> the following
-              sealed post to your blog
+              <button onClick={copySealedPostMarkdown}>
+                Copy Markdown
+              </button>{" "}
+              <button onClick={copySealedPostHtml}>Copy Html</button> to your
+              blog
             </p>
             <div style={{ margin: "20px 0" }}>
               <div
