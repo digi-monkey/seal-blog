@@ -154,4 +154,26 @@ describe("NaiveFriends721", function () {
     ).toString("utf-8");
     expect(decodePk).to.equal(expectedEncryptPubKey);
   });
+
+  it("Should subscribe", async function name() {
+    const [owner] = await ethers.getSigners();
+
+    const expectedEncryptPubKey =
+      "Dh7qRLQ2UTj7K8V1VH3BTNl6gj3vYeIwC1ZccpVKn38=";
+
+    const mintTx = await myToken.subscribe(
+      owner.address,
+      expectedEncryptPubKey,
+      { value: tokenPrice }
+    );
+
+    // wait until the transaction is mined
+    await mintTx.wait();
+    const tokenId = 3;
+    const addr = await myToken.ownerOf(tokenId);
+    const pk = await myToken.encryptPublicKeys(tokenId);
+
+    expect(addr).to.equal(owner.address);
+    expect(pk).to.equal(expectedEncryptPubKey);
+  });
 });

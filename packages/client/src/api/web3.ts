@@ -4,6 +4,7 @@ import { envConfig } from "../configs/env-config";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract";
+import { HexStr } from "@seal-blog/sdk";
 
 export const getConfigBlockchainNetwork = () => {
   const networkType = envConfig.networkType;
@@ -58,4 +59,52 @@ export const getFirstTokenId = async (
   }
   const tokenIds: string[] = relatedEvents.map((e) => e.returnValues.tokenId);
   return tokenIds[0];
+};
+
+export const subscribe = async (
+  contractFactory: Contract,
+  account: HexStr,
+  pk: string
+) => {
+  const tokenPrice = await contractFactory.methods.tokenPrice().call();
+  const tx = await contractFactory.methods
+    .subscribe(account, pk)
+    .send({ from: account, value: tokenPrice });
+  console.log(tx);
+  return tx;
+};
+
+export const mint = async (contractFactory: Contract, account: HexStr) => {
+  const tokenPrice = await contractFactory.methods.tokenPrice().call();
+  console.log(tokenPrice);
+  const tx = await contractFactory.methods
+    .mint(account)
+    .send({ from: account, value: tokenPrice });
+  console.log(tx);
+  return tx;
+};
+
+export const setPk = async (
+  contractFactory: Contract,
+  account: HexStr,
+  pk: string
+) => {
+  const tokenId = await getFirstTokenId(contractFactory, account);
+  const tx = await contractFactory.methods
+    .setEncryptPublicKey(tokenId, pk)
+    .send({ from: account });
+  console.log(tx);
+};
+
+export const isSubscriber = async (
+  contractFactory: Contract,
+  account: HexStr
+) => {
+  const tokenId = await getFirstTokenId(contractFactory, account);
+  if (tokenId == null) return false;
+
+  const pk = await contractFactory.methods.encryptPublicKeys(tokenId).call();
+  if (pk == null) return false;
+
+  return true;
 };

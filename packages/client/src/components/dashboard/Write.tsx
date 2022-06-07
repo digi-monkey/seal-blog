@@ -71,7 +71,7 @@ export function Write() {
     console.log(res);
 
     // add decrypt function
-    addDecryptButton(API_SERVER_URL);
+    addDecryptButton(API_SERVER_URL, CLIENT_URL);
   };
 
   const handleInput = (evt: React.ChangeEvent<HTMLInputElement>) => {

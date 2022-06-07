@@ -5,6 +5,7 @@ import { Unseal } from "./components/dashboard/Unseal";
 import { Write } from "./components/dashboard/Write";
 import { User } from "./components/dashboard/User";
 import { Home } from "./components/home/Home";
+import { Subscribe } from "./components/dashboard/Subscribe";
 
 export default function MyRouter() {
   return (
@@ -18,6 +19,9 @@ export default function MyRouter() {
         </Route>
         <Route path="/unseal">
           <Unseal />
+        </Route>
+        <Route path="/subscribe">
+          <Subscribe />
         </Route>
         <Route path="/nft">
           <Intro />

@@ -4,12 +4,10 @@ import { Stack } from "degen";
 import { Grid } from "@material-ui/core";
 import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
-import { Api } from "@seal-blog/sdk";
-import { API_SERVER_URL } from "../../configs";
+import { detectHtmlToAddButton, Api } from "@seal-blog/sdk";
+import { API_SERVER_URL, CLIENT_URL } from "../../configs";
 import { contractFactory, getFirstTokenId } from "../../api/web3";
 import web3Utils from "web3-utils";
-
-import "@seal-blog/sdk/lib/js-script";
 
 const api = new Api(API_SERVER_URL);
 
@@ -153,6 +151,8 @@ export function Unseal() {
     await setIsRawArticleLoadFailed(false);
     await setRawArticleData(data);
     setIsRawArticleLoading(false);
+
+    detectHtmlToAddButton(API_SERVER_URL, 20, CLIENT_URL);
   };
 
   const subscribe = async () => {

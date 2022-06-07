@@ -5,6 +5,6 @@
     },
     "client_url": {
         "production": "https://underplay.xyz",
-        "development": "http://localhost:3000" 
+        "development": "http://localhost:9111" 
     }
 }

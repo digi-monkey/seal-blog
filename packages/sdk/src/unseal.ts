@@ -6,6 +6,8 @@ import {
   UNSEAL_SPLITTER_TEXT,
   SPLITTER_HTML_REGEX,
 } from "./regex";
+import { parsePostId } from "./seal";
+import { requestEncryptionPublicKeyFromMetamask } from "./web3";
 
 declare global {
   interface Window {
@@ -42,17 +44,24 @@ export async function decryptArticle(
   account: string,
   postId: string,
   pk: string,
-  api: Api
+  api: Api,
+  clientRpc: string
 ) {
   let envelop;
   try {
     envelop = (await api.getEnvelopByPostIdAndPk(postId, pk)).envelop;
-    console.log(envelop);
+    console.log("envelop:", envelop);
   } catch (error: any) {
-    alert(
-      "sorry, you are not allow to read this article. err: " + error.message
+    const confirm = window.confirm(
+      "Decrypt article failed.\n\nErr: " +
+        error.message +
+        "\n\nAre you a subscriber? Click Ok to learn How to subscribe the author's NFT readership token!"
     );
-    return;
+    if (!confirm) return;
+
+    const contract = parsePostId(postId);
+    return (window.location.href =
+      clientRpc + "/subscribe?contract=" + contract.contractAddress);
   }
 
   if (envelop != null) {
@@ -86,28 +95,6 @@ export async function getAccountAndPk() {
     (await requestEncryptionPublicKeyFromMetamask(account));
 
   return { account, pk: encryptionPublicKey };
-}
-
-export async function requestEncryptionPublicKeyFromMetamask(account: string) {
-  if (
-    window.confirm(
-      "we want to store your signing publicKey on browser for connivent, good?"
-    )
-  ) {
-    // Save it
-    const pk = (await window.ethereum.request({
-      method: "eth_getEncryptionPublicKey",
-      params: [account], // you must have access to the specified account
-    })) as string;
-    localStorage.setItem(account, pk);
-    return pk;
-  } else {
-    // Do nothing!
-    alert(
-      "will not store on browser, will ask your metamask each time you need it."
-    );
-    return undefined;
-  }
 }
 
 export function replaceEncryptText(decryptText: string) {
@@ -171,7 +158,7 @@ export function replaceSealSplitter() {
   });
 }
 
-export function addDecryptButton(rpc: string) {
+export function addDecryptButton(rpc: string, clientRpc: string) {
   let isSuccess = false;
   const originNode = findFirstSealSplitterNode();
   if (originNode == null) {
@@ -185,7 +172,7 @@ export function addDecryptButton(rpc: string) {
       const clickHandler = function (e: MouseEvent) {
         e.preventDefault();
         e.stopPropagation();
-        unseal(rpc);
+        unseal(rpc, clientRpc);
         return false;
       };
 
@@ -195,7 +182,9 @@ export function addDecryptButton(rpc: string) {
           return console.log("no here text found");
         }
 
-        aLink.parentElement.addEventListener("click", clickHandler, false);
+        aLink.parentElement.addEventListener("click", clickHandler, {
+          once: true,
+        });
 
         isSuccess = true;
       });
@@ -258,7 +247,9 @@ export function findSpecificNode(
   return result;
 }
 
-export async function unseal(rpc: string) {
+// rpc: api-server rpc
+// clientRpc: client ui rpc
+export async function unseal(rpc: string, clientRpc: string) {
   if (document.readyState != "complete") {
     return alert("page not load yet, please wait.");
   }
@@ -275,8 +266,44 @@ export async function unseal(rpc: string) {
   }
 
   const api = new Api(rpc);
-  const decryptText = await decryptArticle(s, account, postId, pk, api);
+  const decryptText = await decryptArticle(
+    s,
+    account,
+    postId,
+    pk,
+    api,
+    clientRpc
+  );
   if (decryptText != null) {
     replaceEncryptText(decryptText);
+  }
+}
+
+export async function detectHtmlToAddButton(
+  rpc: string,
+  maxRetry: number,
+  clientRpc: string
+) {
+  try {
+    if (window) {
+      let isSuccess = false;
+      let retryCount = 0;
+
+      const t = setInterval(() => {
+        isSuccess = addDecryptButton(rpc, clientRpc);
+        retryCount++;
+        console.log(`[unseal.js] retry ${retryCount} times..`);
+
+        if (retryCount > maxRetry) {
+          clearInterval(t);
+        }
+
+        if (isSuccess) {
+          clearInterval(t);
+        }
+      }, 5000);
+    }
+  } catch (error) {
+    console.log("[unseal.js] no window detect.");
   }
 }

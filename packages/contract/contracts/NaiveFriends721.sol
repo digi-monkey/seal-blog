@@ -57,6 +57,30 @@ contract NaiveFriends721 is ERC721URIStorage {
         encryptPublicKeys[tokenId] = key;
     }
 
+    // subscribe = mint + setEncryptPk in one step
+    function subscribe(address player, string memory key) external payable {
+        if (msg.value < tokenPrice) {
+            revert InsufficientOffer({price: tokenPrice, offer: msg.value});
+        }
+
+        _tokenIds.increment();
+
+        uint256 tokenId = _tokenIds.current();
+        _mint(player, tokenId);
+
+        // generate random seed for tokenUri
+        bytes32 blockHash = blockhash(block.number - 2);
+        bytes32 seed = keccak256(
+            abi.encodePacked(msg.sender, blockHash, tokenId)
+        );
+        string memory tokenUri = Strings.toHexString(uint256(seed));
+        _setTokenURI(tokenId, tokenUri);
+
+        console.log("minted, tokenId: %s, tokenUri: %s", tokenId, tokenUri);
+
+        return setEncryptPublicKey(tokenId, key);
+    }
+
     function withdraw(uint256 _amount) public {
         if (msg.sender != admin) {
             revert AdminOnly(admin, msg.sender);
