@@ -1,0 +1,129 @@
+import { Api, getEncryptionPublicKey, HexStr } from "@seal-blog/sdk";
+import { Button, Heading, Text } from "degen";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { contractFactory, isSubscriber, subscribe } from "../../api";
+import { API_SERVER_URL } from "../../configs";
+import { Account } from "../metamask/account";
+import web3Util from "web3-utils";
+import { Card, Grid } from "@material-ui/core";
+
+const api = new Api(API_SERVER_URL);
+
+const styles = {
+  root: {
+    height: "500px",
+    maxWidth: "1000px",
+    margin: "0 auto",
+    padding: "20px",
+  },
+  info: {
+    maxWidth: "600px",
+    margin: "2em auto",
+    padding: "1em",
+    border: "1px solid gray",
+  },
+  subArea: {
+    margin: "2em 5px",
+  },
+  hintText: {
+    padding: "5px",
+    fontSize: "12px",
+    color: "gray",
+  },
+};
+
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export function Subscribe() {
+  let query = useQuery();
+  const _contractAddress: HexStr | null = query.get("contract");
+  if (_contractAddress == null) {
+    throw new Error("contractAddress is null in query");
+  }
+  const contractAddress: HexStr = web3Util.toChecksumAddress(_contractAddress);
+  contractFactory.options.address = contractAddress;
+
+  const [author, setAuthor] = useState<HexStr>();
+  const [account, setAccount] = useState<HexStr>();
+  const [isSub, setIsSub] = useState<boolean>();
+  const [tokenPrice, setTokenPrice] = useState<string>();
+
+  useEffect(() => {
+    requestAuthor();
+    getTokenPrice();
+  }, []);
+
+  useEffect(() => {
+    checkIsSubscribe();
+  }, [account]);
+
+  const requestAuthor = async () => {
+    const au = await api.getContractOwner(contractAddress);
+    setAuthor(au);
+  };
+
+  const checkIsSubscribe = async () => {
+    if (!account) return;
+
+    const res = await isSubscriber(contractFactory, account);
+    setIsSub(res);
+  };
+
+  const getTokenPrice = async () => {
+    const price = await contractFactory.methods.tokenPrice().call();
+    setTokenPrice(web3Util.fromWei(price));
+  };
+
+  const subscribeBtn = async () => {
+    if (!account) return;
+
+    const pk = await getEncryptionPublicKey(account);
+    if (!pk) return;
+
+    const res = await subscribe(contractFactory, account, pk);
+    return res;
+  };
+
+  return (
+    <div style={styles.root}>
+      <Account accountCallback={setAccount} />
+      <hr />
+
+      <Grid container spacing={1}>
+        <Grid item xs={12}>
+          <br />
+          <Heading align={"center"}>NFT Readership Token By SealBlog</Heading>
+          <br />
+          <div style={styles.info}>
+            <Card style={{ padding: "10px", margin: "5px", fontSize: "17px" }}>
+              <Text lineHeight={2}>Contract: {contractAddress}</Text>
+              <Text lineHeight={2}>Author: {author}</Text>
+              <Text lineHeight={2}></Text>
+              <Text lineHeight={2}>
+                current price: {tokenPrice} ckb, {"    "}total subscriber: {"6"}
+              </Text>
+            </Card>
+            <div style={styles.subArea}>
+              <p style={styles.hintText}>
+                by subscribe the NFT readership token, you will be able to read
+                the content and mint a 721 token with avatar.
+              </p>
+              <Button
+                onClick={subscribeBtn}
+                width={{ xs: "full", md: "full" }}
+                disabled={!!isSub}
+              >
+                {" "}
+                Subscribe{" "}
+              </Button>
+            </div>
+          </div>
+        </Grid>
+      </Grid>
+    </div>
+  );
+}

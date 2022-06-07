@@ -166,6 +166,7 @@ export class MainService extends Service {
       throw new Error(`tx receipt status !== 1, txHash: ${txHash}`);
     }
 
+    // todo: account should be admin address, not from address
     const account = receipt.from.toLowerCase();
     const contractAddress = receipt.contractAddress;
     const code = await provider.getCode(contractAddress);
@@ -187,6 +188,18 @@ export class MainService extends Service {
     const insertResult = await this.query.insertContract(contractDoc);
 
     return insertResult;
+  }
+
+  async get_contract_owner() {
+    const addr = this.req.query.contract_address;
+    if (addr == null) throw new Error("contract_address params is null");
+
+    const result = await this.query.getAccountByContract(addr);
+    if (result == null) {
+      throw new Error(`account not found, contract address: ${addr}`);
+    }
+
+    return result.account;
   }
 
   async get_contract_address() {
@@ -223,4 +236,38 @@ export class MainService extends Service {
     });
     return res;
   }
+
+  // async get_key_by_post_id(){
+  //   const postId = this.req.query.post_id;
+  //   if (postId == null) throw new Error("post id params is null");
+
+  //   const key = await this.query.getKeyByPostId(postId);
+  //   if (key == null) {
+  //     throw new Error(`key not found, post id: ${postId}`);
+  //   }
+
+  //   const post = await this.query.getPostByPostId(postId);
+  //   if (post == null) {
+  //     throw new Error(`post not found, post id: ${postId}`);
+  //   }
+
+  //   const contractAddress = post.contractAddress;
+  //   const account = await this.query.getAccountByContract(contractAddress);
+  //   if (account == null) {
+  //     throw new Error(`account not found, contractAddress: ${contractAddress}`);
+  //   }
+
+  //   const owner = account.account;
+
+  //   const accessToken = new ethers.Contract(
+  //     contractAddress,
+  //     CONTRACT_ARTIFACTS.abi,
+  //     provider
+  //   );
+  //   const pk = await accessToken.encryptPublicKeys()
+
+  //   // encrypt the key and iv to owner;
+  //   encryptAesKeyAndIv()
+  //   return key.account;
+  // }
 }

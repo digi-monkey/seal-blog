@@ -89,6 +89,12 @@ export class Query {
   }
 
   // public methods
+  async getAccountByContract(contractAddress: string) {
+    return await this.findFirstOne(this.database.contracts(), {
+      contractAddress,
+    });
+  }
+
   async getContractByAccount(account: string) {
     return await this.findFirstOne(this.database.contracts(), {
       account,
@@ -156,6 +162,9 @@ export class Query {
   }
 
   async insertEnvelops(data: OptionalUnlessRequiredId<Envelop>[]) {
+    if (data.length <= 0) {
+      return "empty envelops. no insert";
+    }
     return await this.insertMany(this.database.envelops(), data);
   }
 }

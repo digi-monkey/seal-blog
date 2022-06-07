@@ -163,6 +163,16 @@ export class Api extends base {
     );
   }
 
+  async getContractOwner(contractAddr: string) {
+    return await this.httpRequest(
+      "get_contract_owner",
+      {
+        contract_address: contractAddr,
+      },
+      HttpProtocolMethod.get
+    );
+  }
+
   async getContractAddress(account: string) {
     return await this.httpRequest(
       "get_contract_address",
