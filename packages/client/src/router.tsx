@@ -6,6 +6,7 @@ import { Write } from "./components/dashboard/Write";
 import { User } from "./components/dashboard/User";
 import { Home } from "./components/home/Home";
 import { Subscribe } from "./components/dashboard/Subscribe";
+import { Post } from "./components/dashboard/Post";
 
 export default function MyRouter() {
   return (
@@ -19,6 +20,9 @@ export default function MyRouter() {
         </Route>
         <Route path="/unseal">
           <Unseal />
+        </Route>
+        <Route path="/post">
+          <Post />
         </Route>
         <Route path="/subscribe">
           <Subscribe />

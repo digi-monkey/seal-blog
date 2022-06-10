@@ -237,37 +237,43 @@ export class MainService extends Service {
     return res;
   }
 
-  // async get_key_by_post_id(){
-  //   const postId = this.req.query.post_id;
-  //   if (postId == null) throw new Error("post id params is null");
+  async get_envelops_by_post_id() {
+    const postId = this.req.query.post_id;
+    if (postId == null) throw new Error("post id is null");
 
-  //   const key = await this.query.getKeyByPostId(postId);
-  //   if (key == null) {
-  //     throw new Error(`key not found, post id: ${postId}`);
-  //   }
+    const envelops = await this.query.getEnvelopsByPostId(postId);
+    return envelops;
+  }
 
-  //   const post = await this.query.getPostByPostId(postId);
-  //   if (post == null) {
-  //     throw new Error(`post not found, post id: ${postId}`);
-  //   }
+  async get_key_envelop_by_post_id() {
+    const postId = this.req.query.post_id;
+    if (postId == null) throw new Error("post id params is null");
 
-  //   const contractAddress = post.contractAddress;
-  //   const account = await this.query.getAccountByContract(contractAddress);
-  //   if (account == null) {
-  //     throw new Error(`account not found, contractAddress: ${contractAddress}`);
-  //   }
+    const keyObj = await this.query.getKeyByPostId(postId);
+    if (keyObj == null) {
+      throw new Error(`key not found, post id: ${postId}`);
+    }
 
-  //   const owner = account.account;
+    const post = await this.query.getPostByPostId(postId);
+    if (post == null) {
+      throw new Error(`post not found, post id: ${postId}`);
+    }
 
-  //   const accessToken = new ethers.Contract(
-  //     contractAddress,
-  //     CONTRACT_ARTIFACTS.abi,
-  //     provider
-  //   );
-  //   const pk = await accessToken.encryptPublicKeys()
+    const contractAddress = post.contractAddress;
+    const account = await this.query.getAccountByContract(contractAddress);
+    if (account == null) {
+      throw new Error(`account not found, contractAddress: ${contractAddress}`);
+    }
 
-  //   // encrypt the key and iv to owner;
-  //   encryptAesKeyAndIv()
-  //   return key.account;
-  // }
+    const accessToken = new ethers.Contract(
+      contractAddress,
+      CONTRACT_ARTIFACTS.abi,
+      provider
+    );
+    const adminPk = await accessToken.adminEncryptPublicKey();
+
+    // encrypt the key and iv to owner;
+    const envelop = encryptAesKeyAndIv(adminPk, keyObj.key, keyObj.iv);
+    return envelop;
+  }
 }

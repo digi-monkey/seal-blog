@@ -107,6 +107,12 @@ export class Query {
     });
   }
 
+  async getEnvelopsByPostId(postId: string) {
+    return await this.find(this.database.envelops(), {
+      postId: postId,
+    });
+  }
+
   async getEnvelopByPostIdAndPk(postId: string, pk: string) {
     return await this.findFirstOne(this.database.envelops(), {
       postId: postId,

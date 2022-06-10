@@ -56,7 +56,6 @@ export function Write() {
     let data = { formInput };
     const key = generateRandomAesKey();
     const iv = generateRandomIv();
-    console.log(data, "key:", key, "iv:", iv);
     const [postId, t] = sealPost(
       data.formInput.text,
       key,

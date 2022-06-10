@@ -1,6 +1,6 @@
 {
   "name": "@seal-blog/contract",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -10,6 +10,7 @@
     "avatar": "ts-node src/avatar.ts",
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "build": "echo 'no build script'",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
     "deploy:hardhat": "hardhat run --network hardhat scripts/deploy.ts",
     "deploy:polyjuice": "hardhat run --network polyjuice scripts/deploy.ts",
@@ -17,6 +18,7 @@
     "deploy:polyjuice-mainnet": "hardhat run --network polyjuiceMainnet scripts/deploy.ts"
   },
   "devDependencies": {
+    "@metamask/eth-sig-util": "^4.0.1",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-etherscan": "^2.1.3",
     "@nomiclabs/hardhat-waffle": "^2.0.0",

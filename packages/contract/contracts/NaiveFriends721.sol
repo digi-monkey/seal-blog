@@ -12,19 +12,71 @@ contract NaiveFriends721 is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     uint256 public tokenPrice;
     address public admin;
+    string public adminEncryptPublicKey;
+    string public baseUri;
     mapping(uint256 => string) public encryptPublicKeys; // tokenId => pk
 
-    constructor(uint256 _tokenPrice, address _admin)
-        ERC721("NaiveFriends721", "RAHF")
-    {
+    constructor(
+        uint256 _tokenPrice,
+        address _admin,
+        string memory _pk
+    ) ERC721("NaiveFriends721", "RAHF") {
         tokenPrice = _tokenPrice;
         admin = _admin;
+        adminEncryptPublicKey = _pk;
     }
 
     error AdminOnly(address admin, address caller);
     error OwnerOnly(uint256 tokenId, address caller);
     error InsufficientPoolBalance(uint256 balance, uint256 amount);
     error InsufficientOffer(uint256 price, uint256 offer);
+    error InvalidTokenPrice(uint256 price);
+
+    function setPrice(uint256 price) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+
+        if (price <= 0) {
+            revert InvalidTokenPrice(price);
+        }
+
+        tokenPrice = price;
+    }
+
+    function setAdminEncryptPublickKey(string memory _pk) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+
+        adminEncryptPublicKey = _pk;
+    }
+
+    function setAdmin(address _admin, string memory _pk) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+
+        admin = _admin;
+        adminEncryptPublicKey = _pk;
+    }
+
+    function totalTokens() public view returns (uint256) {
+        uint256 tokenId = _tokenIds.current();
+        return tokenId;
+    }
+
+    function setBaseURI(string memory _baseUri) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+
+        baseUri = _baseUri;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseUri;
+    }
 
     function mint(address player) external payable returns (uint256) {
         if (msg.value < tokenPrice) {
