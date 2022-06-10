@@ -69,7 +69,7 @@ export async function encryptAesKeyAndIv(
   iv: string
 ) {
   console.info(`pk: ${encryptionPublicKey}, aesKey: ${AESKey}, iv: ${iv}`);
-  const encryptedMessage = ethUtil.bufferToHex(
+  const encryptedMessage: HexStr = ethUtil.bufferToHex(
     Buffer.from(
       JSON.stringify(
         sigUtil.encrypt({

@@ -1,5 +1,5 @@
 import { Card, Grid } from "@material-ui/core";
-import { Heading, Text, Button } from "degen";
+import { Heading, Text, Button, IconCog } from "degen";
 import React, { useEffect, useState } from "react";
 import { Account } from "../metamask/account";
 import { Token } from "../nft/Token";
@@ -23,6 +23,7 @@ const styles = {
 
 export function User() {
   const [account, setAccount] = useState<string>();
+  const [encryptPk, setEncryptPk] = useState<string>();
   const [posts, setPosts] = useState<any[]>([]);
 
   useEffect(() => {
@@ -48,9 +49,12 @@ export function User() {
 
   return (
     <div style={styles.root}>
-      <Account accountCallback={setAccount} />
+      <Account
+        accountCallback={setAccount}
+        encryptionPublicKeyCallback={setEncryptPk}
+      />
       <hr />
-      <Token account={account}></Token>
+      <Token account={account} encryptPk={encryptPk}></Token>
       <Button onClick={write} width={{ xs: "full", md: "full" }}>
         Write
       </Button>
@@ -66,6 +70,15 @@ export function User() {
                 </a>
               </Text>
               <Text>{p.createdTs}</Text>
+            </Grid>
+            <Grid item xs={3}>
+              <a
+                style={{ display: "inline" }}
+                target={"_blank"}
+                href={"/post?postId=" + p.postId}
+              >
+                <IconCog />
+              </a>
             </Grid>
           </Grid>
         </Card>

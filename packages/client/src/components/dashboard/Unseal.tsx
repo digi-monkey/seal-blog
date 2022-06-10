@@ -6,7 +6,6 @@ import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
 import { detectHtmlToAddButton, Api } from "@seal-blog/sdk";
 import { API_SERVER_URL, CLIENT_URL } from "../../configs";
-import { contractFactory, getFirstTokenId } from "../../api/web3";
 import web3Utils from "web3-utils";
 
 const api = new Api(API_SERVER_URL);
@@ -119,7 +118,6 @@ export function Unseal() {
 
   const [contractAddress, setContractAddress] = useState<string>();
   const [account, setAccount] = useState<string>();
-  const [encryptionPublicKey, setEncryptionPublicKey] = useState<string>();
 
   useEffect(() => {
     loadRawArticle();
@@ -130,12 +128,6 @@ export function Unseal() {
     );
     setContractAddress(addr);
   }, []);
-
-  useEffect(() => {
-    if (account != null) {
-      getEncryptionPublicKey(account);
-    }
-  }, [account]);
 
   const loadRawArticle = async () => {
     setIsRawArticleLoading(true);
@@ -153,36 +145,6 @@ export function Unseal() {
     setIsRawArticleLoading(false);
 
     detectHtmlToAddButton(API_SERVER_URL, 20, CLIENT_URL);
-  };
-
-  const subscribe = async () => {
-    if (contractAddress == null) {
-      return alert("contract address is null!");
-    }
-
-    contractFactory.options.address = contractAddress;
-    const tokenPrice = await contractFactory.methods.tokenPrice().call();
-    console.log(tokenPrice);
-    const tx = await contractFactory.methods
-      .mint(account)
-      .send({ from: account, value: tokenPrice });
-    console.log(tx);
-  };
-
-  const setPk = async () => {
-    if (contractAddress == null) {
-      return alert("contract address is null!");
-    }
-    if (account == null) {
-      return alert("account address is null!");
-    }
-
-    contractFactory.options.address = contractAddress;
-    const tokenId = await getFirstTokenId(contractFactory, account);
-    const tx = await contractFactory.methods
-      .setEncryptPublicKey(tokenId, encryptionPublicKey)
-      .send({ from: account });
-    console.log(tx);
   };
 
   // todo: refactor, don't copy code from account.tsx
@@ -204,36 +166,6 @@ export function Unseal() {
       } else {
         setAccount(undefined);
       }
-    }
-  };
-
-  const getEncryptionPublicKey = async (account: string) => {
-    const encryptionPublicKey =
-      localStorage.getItem(account) ||
-      (await requestEncryptionPublicKeyFromMetamask(account));
-    await setEncryptionPublicKey(encryptionPublicKey);
-    return encryptionPublicKey;
-  };
-
-  const requestEncryptionPublicKeyFromMetamask = async (account: string) => {
-    if (
-      window.confirm(
-        "we want to store your signing publicKey on browser for connivent, good?"
-      )
-    ) {
-      // Save it
-      const pk = (await window.ethereum.request({
-        method: "eth_getEncryptionPublicKey",
-        params: [account], // you must have access to the specified account
-      })) as string;
-      localStorage.setItem(account, pk);
-      return pk;
-    } else {
-      // Do nothing!
-      alert(
-        "will not store on browser, will ask your metamask each time you need it."
-      );
-      return undefined;
     }
   };
 
@@ -267,9 +199,10 @@ export function Unseal() {
               <a target={"_blank"} href="https://github.com">
                 Seal Blog
               </a>{" "}
-              {"can't decrypt? you need to subscribe and set pk first!"}{" "}
-              <button onClick={subscribe}>subscribe</button>{" "}
-              <button onClick={setPk}>set pk</button>
+              {"can't decrypt? you need to subscribe first!"}{" "}
+              <a href={`="/subscribe?contract=${contractAddress}`}>
+                go to subscribe
+              </a>{" "}
             </div>
           </div>
         </Grid>

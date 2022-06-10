@@ -12,7 +12,7 @@ const CLIENT_RPC: string = normalizeUrl(
 );
 
 const MAX_RETRY: number = +(
-  document.currentScript?.getAttribute("maxRetry") || 20
+  document.currentScript?.getAttribute("maxRetry") || 100
 );
 
 detectHtmlToAddButton(RPC, MAX_RETRY, CLIENT_RPC);

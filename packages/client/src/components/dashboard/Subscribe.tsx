@@ -51,10 +51,12 @@ export function Subscribe() {
   const [account, setAccount] = useState<HexStr>();
   const [isSub, setIsSub] = useState<boolean>();
   const [tokenPrice, setTokenPrice] = useState<string>();
+  const [totalTokens, setTotalTokens] = useState<string>();
 
   useEffect(() => {
     requestAuthor();
     getTokenPrice();
+    getTotalTokens();
   }, []);
 
   useEffect(() => {
@@ -76,6 +78,11 @@ export function Subscribe() {
   const getTokenPrice = async () => {
     const price = await contractFactory.methods.tokenPrice().call();
     setTokenPrice(web3Util.fromWei(price));
+  };
+
+  const getTotalTokens = async () => {
+    const total = await contractFactory.methods.totalTokens().call();
+    setTotalTokens(total);
   };
 
   const subscribeBtn = async () => {
@@ -104,7 +111,8 @@ export function Subscribe() {
               <Text lineHeight={2}>Author: {author}</Text>
               <Text lineHeight={2}></Text>
               <Text lineHeight={2}>
-                current price: {tokenPrice} ckb, {"    "}total subscriber: {"6"}
+                Current Price: {tokenPrice} ckb, {"    "}Total Subscribers:{" "}
+                {totalTokens}
               </Text>
             </Card>
             <div style={styles.subArea}>

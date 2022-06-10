@@ -202,4 +202,34 @@ export class Api extends base {
       HttpProtocolMethod.get
     );
   }
+
+  async getEnvelopsByPostId(postId: string) {
+    return await this.httpRequest(
+      "get_envelops_by_post_id",
+      {
+        post_id: postId,
+      },
+      HttpProtocolMethod.get
+    );
+  }
+
+  async generateEnvelops(postId: string) {
+    return await this.httpRequest(
+      "generate_envelops",
+      {
+        post_id: postId,
+      },
+      HttpProtocolMethod.get
+    );
+  }
+
+  async getKeyEnvelopByPostId(postId: string) {
+    return await this.httpRequest(
+      "get_key_envelop_by_post_id",
+      {
+        post_id: postId,
+      },
+      HttpProtocolMethod.get
+    );
+  }
 }

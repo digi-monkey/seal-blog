@@ -66,8 +66,9 @@ export async function decryptArticle(
 
   if (envelop != null) {
     const s = await decryptAESKey(envelop, account);
-    const aesKey = s.slice(0, 32);
-    const iv = s.slice(32);
+    const keyObj = unSerializeAesKeyAndIv(s);
+    const aesKey = keyObj.aesKey;
+    const iv = keyObj.iv;
     console.log("envelop decrypted =>", aesKey, iv);
     const text = decrypt(encryptedText, aesKey, iv);
     console.log("decrypt ==>", text);
@@ -83,6 +84,15 @@ export async function decryptAESKey(envelop: string, account: string) {
     params: [envelop, account],
   });
   return decryptedMessage;
+}
+
+export function unSerializeAesKeyAndIv(serializeKeyAndIv: string) {
+  const aesKey = serializeKeyAndIv.slice(0, 32);
+  const iv = serializeKeyAndIv.slice(32);
+  return {
+    aesKey,
+    iv,
+  };
 }
 
 export async function getAccountAndPk() {
@@ -301,7 +311,7 @@ export async function detectHtmlToAddButton(
         if (isSuccess) {
           clearInterval(t);
         }
-      }, 5000);
+      }, 1000);
     }
   } catch (error) {
     console.log("[unseal.js] no window detect.");
