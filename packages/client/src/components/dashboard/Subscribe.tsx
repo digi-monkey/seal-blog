@@ -52,16 +52,23 @@ export function Subscribe() {
   const [isSub, setIsSub] = useState<boolean>();
   const [tokenPrice, setTokenPrice] = useState<string>();
   const [totalTokens, setTotalTokens] = useState<string>();
+  const [nftImages, setNftImages] = useState<string[]>([]);
+  const [baseUri, setBaseUri] = useState<string>();
 
   useEffect(() => {
     requestAuthor();
     getTokenPrice();
     getTotalTokens();
+    getBaseUri();
   }, []);
 
   useEffect(() => {
     checkIsSubscribe();
   }, [account]);
+
+  useEffect(() => {
+    getAllTokenUri();
+  }, [totalTokens]);
 
   const requestAuthor = async () => {
     const au = await api.getContractOwner(contractAddress);
@@ -85,6 +92,26 @@ export function Subscribe() {
     setTotalTokens(total);
   };
 
+  const getTokenUri = async (tokenId: number) => {
+    const uri = await contractFactory.methods.tokenURI(tokenId).call();
+    return uri;
+  };
+
+  const getAllTokenUri = async () => {
+    const total = +(totalTokens || 0);
+    const newData = nftImages;
+    for (let i = 1; i < total + 1; i++) {
+      const uri = await getTokenUri(i);
+      newData.push(uri);
+    }
+    setNftImages(newData);
+  };
+
+  const getBaseUri = async () => {
+    const uri = await contractFactory.methods.baseUri().call();
+    setBaseUri(uri);
+  };
+
   const subscribeBtn = async () => {
     if (!account) return;
 
@@ -94,6 +121,18 @@ export function Subscribe() {
     const res = await subscribe(contractFactory, account, pk);
     return res;
   };
+
+  const avatars =
+    baseUri && baseUri.length > 0
+      ? nftImages.map((i, index) => (
+          <img
+            key={index}
+            style={{ width: "60px", height: "60px" }}
+            src={i + ".svg"}
+            alt=""
+          />
+        ))
+      : nftImages.map((i, index) => <span key={index}>nft metadata: {i}</span>);
 
   return (
     <div style={styles.root}>
@@ -106,19 +145,20 @@ export function Subscribe() {
           <Heading align={"center"}>NFT Readership Token By SealBlog</Heading>
           <br />
           <div style={styles.info}>
+            {avatars}
             <Card style={{ padding: "10px", margin: "5px", fontSize: "17px" }}>
               <Text lineHeight={2}>Contract: {contractAddress}</Text>
               <Text lineHeight={2}>Author: {author}</Text>
               <Text lineHeight={2}></Text>
               <Text lineHeight={2}>
-                Current Price: {tokenPrice} ckb, {"    "}Total Subscribers:{" "}
+                Current Price: {tokenPrice} CKB, {"    "}Total Subscribers:{" "}
                 {totalTokens}
               </Text>
             </Card>
             <div style={styles.subArea}>
               <p style={styles.hintText}>
-                by subscribe the NFT readership token, you will be able to read
-                the content and mint a 721 token with avatar.
+                by subscribe, you will be able to read the content and mint an
+                unique Erc721 readership token. <a href="/nft">more info</a>
               </p>
               <Button
                 onClick={subscribeBtn}

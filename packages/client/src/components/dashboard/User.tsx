@@ -62,8 +62,8 @@ export function User() {
       <Heading>Posts</Heading>
       {posts.map((p, id) => (
         <Card key={id} style={{ padding: "10px", margin: "20px 0" }}>
-          <Grid container spacing={1}>
-            <Grid item xs={9}>
+          <Grid container spacing={2}>
+            <Grid item xs={10}>
               <Text>
                 <a target={"_blank"} href={"/unseal?postId=" + p.postId}>
                   {p.postId}
@@ -71,7 +71,7 @@ export function User() {
               </Text>
               <Text>{p.createdTs}</Text>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={2}>
               <a
                 style={{ display: "inline" }}
                 target={"_blank"}

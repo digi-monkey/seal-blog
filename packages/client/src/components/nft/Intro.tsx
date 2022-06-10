@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Heading, Text, Box } from "degen";
+import { Heading, Text, Box, Stack } from "degen";
 import { avatar } from "../../api/nft";
 
 const styles = {
@@ -26,8 +26,8 @@ export function Intro() {
     setNftImage(svg);
   };
   return (
-    <div className="App">
-      <header className="App-header">
+    <Stack align={"center"}>
+      <header style={{ textAlign: "center" }} className="App-header">
         <Box margin={"10"}>
           <a href="/">
             <img
@@ -73,7 +73,7 @@ export function Intro() {
                   of that NFT token.{" "}
                 </li>
                 <li>
-                  4. bonus: when you buy NFT token, you will mint a unique
+                  4. bonus: when you buy NFT token, you might mint a unique
                   avatar as well!
                 </li>
               </ul>
@@ -87,6 +87,6 @@ export function Intro() {
           </div>
         </Box>
       </header>
-    </div>
+    </Stack>
   );
 }

@@ -6,6 +6,7 @@ import web3Utils from "web3-utils";
 import { styles } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
+import { avatar } from "../../api";
 
 const api = new Api(API_SERVER_URL);
 
@@ -20,6 +21,7 @@ export function Token(props: NftManagerProp) {
   const [tokenPrice, setTokenPrice] = useState(0);
   const [balance, setBalance] = useState(0);
   const [admin, setAdmin] = useState("");
+  const [nftUrl, setNftUrl] = useState<string>();
   const [isDeployed, setIsDeployed] = useState(false);
   const [deployedContractAddr, setDeployedContractAddr] = useState<string>();
 
@@ -38,6 +40,7 @@ export function Token(props: NftManagerProp) {
     fetchTokenPrice();
     fetchContractBalance();
     fetchAdminAddress();
+    fetchBaseUri();
   }, [deployedContractAddr]);
 
   const fetchTotalReaders = async () => {
@@ -60,6 +63,11 @@ export function Token(props: NftManagerProp) {
   const fetchAdminAddress = async () => {
     const adminAddr = await contractFactory.methods.admin().call();
     setAdmin(adminAddr);
+  };
+
+  const fetchBaseUri = async () => {
+    const url = await contractFactory.methods.baseUri().call();
+    setNftUrl(url);
   };
 
   const fetchContractAddress = async () => {
@@ -177,6 +185,27 @@ export function Token(props: NftManagerProp) {
     console.log(tx);
   };
 
+  const setBaseUri = async (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (deployedContractAddr == null) {
+      return alert("contract address is null, have you deploy yet?");
+    }
+
+    const url = promptInputBaseUri();
+    if (url == null) {
+      return;
+    }
+
+    contractFactory.options.address = deployedContractAddr;
+    const tx = await contractFactory.methods.setBaseURI(url).send({
+      from: account,
+    });
+    console.log(tx);
+    fetchBaseUri();
+  };
+
   const promptInputTokenPrice = () => {
     const price = window.prompt("Please enter CKB price per token", "100");
     if (price == null) {
@@ -218,6 +247,19 @@ export function Token(props: NftManagerProp) {
     };
   };
 
+  const promptInputBaseUri = () => {
+    const url = window.prompt(
+      `Please enter baseURI for this NFT`,
+      `http://example.com`
+    );
+    if (url == null) {
+      alert("url is null");
+      return null;
+    }
+
+    return url;
+  };
+
   return (
     <div>
       <Card style={{ padding: "10px", margin: "20px 0", borderRadius: "5px" }}>
@@ -251,6 +293,29 @@ export function Token(props: NftManagerProp) {
             </Text>
 
             <Text>Token Holders: {totalReaders}</Text>
+
+            <Text>
+              {"NFT BaseURI: " + nftUrl}
+              --
+              <a href="" onClick={setBaseUri}>
+                set base uri
+              </a>
+            </Text>
+            {(!nftUrl || nftUrl.length === 0) && (
+              <div>
+                <Text>
+                  You can set token base uri to show different image for your
+                  NFT like below
+                </Text>
+                <img
+                  style={{ width: "100px", height: "100px" }}
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                    avatar.random()
+                  )}`}
+                  alt=""
+                />
+              </div>
+            )}
           </div>
         )}
         <hr />

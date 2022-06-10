@@ -13,6 +13,7 @@ contract NaiveFriends721 is ERC721URIStorage {
     uint256 public tokenPrice;
     address public admin;
     string public adminEncryptPublicKey;
+    string public baseUri;
     mapping(uint256 => string) public encryptPublicKeys; // tokenId => pk
 
     constructor(
@@ -63,6 +64,18 @@ contract NaiveFriends721 is ERC721URIStorage {
     function totalTokens() public view returns (uint256) {
         uint256 tokenId = _tokenIds.current();
         return tokenId;
+    }
+
+    function setBaseURI(string memory _baseUri) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+
+        baseUri = _baseUri;
+    }
+
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseUri;
     }
 
     function mint(address player) external payable returns (uint256) {

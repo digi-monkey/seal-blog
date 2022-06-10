@@ -142,7 +142,7 @@ describe("NaiveFriends721", function () {
     ).to.be.revertedWith("ERC721: operator query for nonexistent token");
 
     // fetch encryptPublicKey by getStorageAt
-    const encryptPublicKeyMappingSlot = 11; // get this value from artifacts/build-info/xxx.json output.contract.storageLayout
+    const encryptPublicKeyMappingSlot = 12; // get this value from artifacts/build-info/xxx.json output.contract.storageLayout
     const position = ethers.utils.solidityKeccak256(
       ["uint256", "uint256"],
       [tokenId, encryptPublicKeyMappingSlot]
@@ -217,6 +217,18 @@ describe("NaiveFriends721", function () {
     expect(await myToken.admin()).to.equal(newAdmin);
     expect(await myToken.adminEncryptPublicKey()).to.equal(
       newAdminEncryptPublicKey
+    );
+  });
+
+  it("Should set baseUri", async function name() {
+    const [_owner, owner] = await ethers.getSigners();
+    const url = "http://example.com";
+    const tx = await myToken.connect(owner).setBaseURI(url);
+    await tx.wait();
+    expect(await myToken.tokenURI(1)).to.include(url);
+
+    await expect(myToken.connect(_owner).setBaseURI(url)).to.be.revertedWith(
+      "AdminOnly"
     );
   });
 });
