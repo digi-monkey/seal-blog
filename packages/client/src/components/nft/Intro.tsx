@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Heading, Text, Box, Stack } from "degen";
 import { avatar } from "../../api/nft";
+import { Network } from "../metamask/network";
 
 const styles = {
   nftImage: {
@@ -49,7 +50,7 @@ export function Intro() {
           borderColor={"black"}
         >
           <Text size={"base"}>
-            An ERC721 NFT represent blog reading membership on Nervos Network
+            An ERC721 NFT represent blog reading membership on Godwoken
           </Text>
         </Box>
 
@@ -60,30 +61,25 @@ export function Intro() {
             <Text size={"base"} align={"left"}>
               <ul>
                 <li>
-                  1. reader must buy one or more NFT to access the blog for
+                  1. Reader must buy one or more NFT to access the blog for
                   reading
                 </li>
                 <li>
-                  2. one NFT token contains one encryption public key, blog
+                  2. One NFT token contains one encryption public key, blog
                   article will encrypt the content to the encryption public key
                   so that the owner of NFT can decrypt and read article.
                 </li>
                 <li>
-                  3. you can only set encryption public key if you are the owner
+                  3. You can only set encryption public key if you are the owner
                   of that NFT token.{" "}
                 </li>
                 <li>
-                  4. bonus: when you buy NFT token, you might mint a unique
+                  4. Bonus: when you buy NFT token, you might mint a unique
                   avatar as well!
                 </li>
               </ul>
             </Text>
-            <Text>
-              use this for deposit:{" "}
-              <a href="https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1">
-                light godwoken
-              </a>
-            </Text>
+            <Network></Network>
           </div>
         </Box>
       </header>
