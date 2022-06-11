@@ -6,6 +6,7 @@ import { Token } from "../nft/Token";
 import { styles as commonStyle } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
+import { Network } from "../metamask/network";
 
 const api = new Api(API_SERVER_URL);
 
@@ -33,6 +34,13 @@ export function User() {
   }, [account]);
 
   const write = async () => {
+    try {
+      await api.getContractAddress(account!);
+    } catch (error: any) {
+      return alert(
+        "You need to create an Readership NFT first! err: " + error.message
+      );
+    }
     window.location.href = "/write";
   };
 
@@ -54,6 +62,7 @@ export function User() {
         encryptionPublicKeyCallback={setEncryptPk}
       />
       <hr />
+      <Network></Network>
       <Token account={account} encryptPk={encryptPk}></Token>
       <Button onClick={write} width={{ xs: "full", md: "full" }}>
         Write

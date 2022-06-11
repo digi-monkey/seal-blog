@@ -301,7 +301,7 @@ export function Token(props: NftManagerProp) {
                 set base uri
               </a>
             </Text>
-            {(!nftUrl || nftUrl.length === 0) && (
+            {nftUrl && nftUrl.length === 0 && (
               <div>
                 <Text>
                   You can set token base uri to show different image for your

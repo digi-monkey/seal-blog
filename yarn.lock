@@ -2024,6 +2024,11 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
+"@dicebear/avataaars@^5.0.0-alpha.0":
+  version "5.0.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@dicebear/avataaars/-/avataaars-5.0.0-alpha.0.tgz#039223ff33ccfaedba4d1b3b7063ed5b7ec1abef"
+  integrity sha512-ljyHj3MiVss0SsdVKW8FdwXD2lrJjfMoZ2VGWzWbN9PoUbKaRxkT2jk5CUg0wZJWd6PPOq6b1BwrS6pzSnOukw==
+
 "@dicebear/avatars@^4.10.2":
   version "4.10.2"
   resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.2.tgz#140ff080752d2923ffdba7f4664c8937999bfd3f"
