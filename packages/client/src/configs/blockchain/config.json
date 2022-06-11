@@ -9,7 +9,9 @@
         "symbol": "CKB",
         "decimals": 18
       },
-      "blockExplorerUrl": "fill me later"
+      "blockExplorerUrl": "fill me later",
+      "depositEntry": "fill me later",
+      "helpEntry": "fill me later"
     },
     "testnet": {
       "chainId": "0x116e9",
@@ -20,7 +22,9 @@
         "symbol": "CKB",
         "decimals": 18
       },
-      "blockExplorerUrl": "https://v1.aggron.gwscan.com/"
+      "blockExplorerUrl": "https://v1.aggron.gwscan.com/",
+      "depositEntry": "https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1",
+      "helpEntry": "https://startwithnervos.com/godwoken"
     },
     "devnet": {
       "chainId": "0x116e8",
@@ -31,7 +35,9 @@
         "symbol": "CKB",
         "decimals": 18
       },
-      "blockExplorerUrl": null
+      "blockExplorerUrl": null,
+      "depositEntry": "fill me later",
+      "helpEntry": "fill me later"
     }
   }
 }

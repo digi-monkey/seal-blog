@@ -1,5 +1,5 @@
 import { createAvatar } from "@dicebear/avatars";
-import * as style from "@dicebear/open-peeps";
+import * as style from "@dicebear/avataaars";
 import crypto from "crypto";
 
 export const avatar = {
