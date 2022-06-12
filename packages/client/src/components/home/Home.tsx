@@ -1,6 +1,8 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
 import { Stack, Box, Text, Button } from "degen";
+import { donate } from "../../configs/blockchain/addresses.json";
+import { github_official, twitter_official } from "../../configs/constant.json";
 
 import { version as sdkVersion } from "@seal-blog/sdk/package.json";
 const { version } = require("../../../package.json");
@@ -74,7 +76,7 @@ const styles = {
     color: "rgb(236, 236, 236)",
     fontSize: "40px",
   },
-  hr: {
+  hrLine: {
     height: "1px",
     backgroundColor: "rgb(236, 236, 236)",
     border: "none",
@@ -108,6 +110,10 @@ const styles = {
     padding: "10px",
     borderRadius: "10px",
     background: "#EDF5FC",
+  },
+  breakLine: {
+    borderTop: "1px solid black",
+    width: "100%",
   },
 };
 
@@ -174,9 +180,15 @@ export function Home() {
                 How Seal Work
               </Text>
               <Text>
-                Seal is a place for blogger to create a new way to connect with
-                their readers. Blogging as before, Earning with crypto, Without
-                moving your original blog home.
+                Seal is a{" "}
+                <a target={"_blank"} href={github_official}>
+                  open-source{" "}
+                </a>
+                tool for blogger to create a new way to connect with their
+                readers. Blogging as before, Earning with crypto, Without moving
+                your original blog home. Users only need to install{" "}
+                <a href="https://metamask.io/">Metamask extension</a> to enter
+                the new world of Web3.
                 <br />
                 <br />
                 By using Seal, you can easily and cheaply deploy an{" "}
@@ -209,6 +221,14 @@ export function Home() {
               </Text>
               <Text variant="large" transform="capitalize">
                 Get Started
+              </Text>
+              <Text>
+                Check out the detail
+                <a target={"_blank"} href="">
+                  {" "}
+                  step-by-step guide{" "}
+                </a>{" "}
+                here.
               </Text>
               <Text variant="large" transform="capitalize">
                 (A. self-hosted blog
@@ -256,12 +276,23 @@ export function Home() {
                 Acknowledgements
               </Text>
               <Text>
-                Inspired by <a href="https://mask.io/">Mask Network</a>
+                Inspired by{" "}
+                <a target={"_blank"} href="https://mask.io/">
+                  Mask Network
+                </a>
               </Text>
-              <hr />
+              <Text variant="large" transform="capitalize">
+                Donate to support seal
+              </Text>
+              <Text>ETH: {donate.eth}</Text>
+              <Text>CKB: {donate.ckb}</Text>
               <Text transform="capitalize">
-                <a href="">twitter</a> <a href="">github</a>{" "}
-                <a href="">discord</a>{" "}
+                <a target={"_blank"} href={twitter_official}>
+                  twitter
+                </a>{" "}
+                <a target={"_blank"} href={github_official}>
+                  github
+                </a>{" "}
               </Text>
             </Stack>
           </div>
