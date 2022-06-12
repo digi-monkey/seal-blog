@@ -1,7 +1,6 @@
 {
-  "polyjuice": {
-    "devnet": {},
-    "testnet": {},
-    "mainnet": {}
-  }
+  "donate": {
+    "eth": "0xb7FAF28FD63DfBD7Ae0619E3243cEcB34fd71336",
+    "ckb": "ckb1qyqw4rfzc5xe5kq3t0px5s9rtcf9yz7gkf4s894y0y"
+  } 
 }

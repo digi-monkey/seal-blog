@@ -3,7 +3,7 @@
     "mainnet": {
       "chainId": "fill me later",
       "rpc": "fill me later",
-      "chainName": "Godwoken - Mainnet",
+      "chainName": "Godwoken Mainnet",
       "nativeCurrency": {
         "name": "Godwoken",
         "symbol": "CKB",
@@ -16,7 +16,7 @@
     "testnet": {
       "chainId": "0x116e9",
       "rpc": "https://godwoken-testnet-v1.ckbapp.dev",
-      "chainName": "Godwoken - Testnet",
+      "chainName": "Godwoken Testnet",
       "nativeCurrency": {
         "name": "Godwoken",
         "symbol": "CKB",
@@ -29,7 +29,7 @@
     "devnet": {
       "chainId": "0x116e8",
       "rpc": "http://localhost:8024",
-      "chainName": "Godwoken - Devnet",
+      "chainName": "Godwoken Devnet",
       "nativeCurrency": {
         "name": "Godwoken",
         "symbol": "CKB",
