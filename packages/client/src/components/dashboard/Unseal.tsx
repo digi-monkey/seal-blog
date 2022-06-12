@@ -173,16 +173,17 @@ export function Unseal() {
     <div style={styles.root}>
       <Grid container spacing={0}>
         <Grid item xs={9} style={styles.leftSide}>
+          <div style={styles.heading}>
+            <span style={styles.heading}>Seal Official Reading Page</span>
+            <hr style={styles.hr} />
+          </div>
+
           {isRawArticleLoading && (
             <Stack>
               <h4>Loading..</h4>
               <ReactLoading type={"balls"} color="#000" />
             </Stack>
           )}
-          <div style={styles.heading}>
-            <span style={styles.heading}>Reading</span>
-            <hr style={styles.hr} />
-          </div>
 
           <p>
             {isRawArticleLoadFailed
@@ -200,7 +201,7 @@ export function Unseal() {
                 Seal Blog
               </a>{" "}
               {"can't decrypt? you need to subscribe first!"}{" "}
-              <a href={`="/subscribe?contract=${contractAddress}`}>
+              <a href={`/subscribe?contract=${contractAddress}`}>
                 go to subscribe
               </a>{" "}
             </div>
