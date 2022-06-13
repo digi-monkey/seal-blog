@@ -140,21 +140,22 @@ export function Account(prop: AccountProp) {
     } catch (e: any) {
       if (e.code === 4902) {
         try {
+          let network: any = {
+            chainId: configChainId,
+            chainName: configChain.chainName,
+            nativeCurrency: {
+              name: configChain.nativeCurrency.name,
+              symbol: configChain.nativeCurrency.symbol, // 2-6 characters long
+              decimals: configChain.nativeCurrency.decimals,
+            },
+            rpcUrls: [configChainRpcUrl],
+          };
+          if (configChain.blockExplorerUrl != null) {
+            network.blockExplorerUrls = [configChain.blockExplorerUrl];
+          }
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: configChainId,
-                chainName: configChain.chainName,
-                nativeCurrency: {
-                  name: configChain.nativeCurrency.name,
-                  symbol: configChain.nativeCurrency.symbol, // 2-6 characters long
-                  decimals: configChain.nativeCurrency.decimals,
-                },
-                blockExplorerUrls: [],
-                rpcUrls: [configChainRpcUrl],
-              },
-            ],
+            params: [network],
           });
         } catch (addError) {
           console.error(addError);

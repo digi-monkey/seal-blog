@@ -4,7 +4,7 @@ import { configChain } from "../../api";
 export function Network() {
   return (
     <Card style={{ padding: "15px" }}>
-      Currently On {"<"}
+      On {"<"}
       {configChain.chainName}
       {">"}
       {",  "}First time on this network? Use{" "}
