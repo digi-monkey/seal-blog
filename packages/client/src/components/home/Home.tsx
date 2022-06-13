@@ -224,7 +224,10 @@ export function Home() {
               </Text>
               <Text>
                 Check out the detail
-                <a target={"_blank"} href="">
+                <a
+                  target={"_blank"}
+                  href="https://github.com/digi-monkey/seal-blog/blob/master/docs/onboarding.md"
+                >
                   {" "}
                   step-by-step guide{" "}
                 </a>{" "}
@@ -255,15 +258,24 @@ export function Home() {
                 reader to Seal official home page.
               </Text>
               <Text variant="large" transform="capitalize">
-                road map
+                road map: progressive decentralization
               </Text>
               <Text>
-                Seal is now an side project. Currently we use centralize way to
-                store your encrypt key for better UX and shortage developing
-                workforce. After more people use and test Seal, we will keep use
-                tech like <a href="https://gun.eco/">Gundb.js</a> to
-                decentralize Seal and make it an complete Web3 project without
-                relying on any centralize server.
+                Seal is now an side project. Currently we use{" "}
+                <strong>centralize</strong> way to store your encrypt key for
+                better UX and shortage developing workforce. After more people
+                use and test Seal, we will keep using tech like{" "}
+                <a target={"_blank"} href="https://gun.eco/">
+                  Gundb.js
+                </a>{" "}
+                /{" "}
+                <a target={"_blank"} href="https://www.arweave.org/">
+                  {" "}
+                  Arweave{" "}
+                </a>{" "}
+                to
+                <strong> decentralize</strong> Seal and make it an complete Web3
+                project without relying on any centralize server.
               </Text>
               <Text>
                 Other features incoming:
