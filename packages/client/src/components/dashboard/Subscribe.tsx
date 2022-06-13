@@ -7,6 +7,7 @@ import { API_SERVER_URL } from "../../configs";
 import { Account } from "../metamask/account";
 import web3Util from "web3-utils";
 import { Card, Grid } from "@material-ui/core";
+import { Price } from "../../api/price";
 
 const api = new Api(API_SERVER_URL);
 
@@ -54,12 +55,14 @@ export function Subscribe() {
   const [totalTokens, setTotalTokens] = useState<string>();
   const [nftImages, setNftImages] = useState<string[]>([]);
   const [baseUri, setBaseUri] = useState<string>();
+  const [ckbPrice, setCkbPrice] = useState<string>();
 
   useEffect(() => {
     requestAuthor();
     getTokenPrice();
     getTotalTokens();
     getBaseUri();
+    fetchCkbPrice();
   }, []);
 
   useEffect(() => {
@@ -122,6 +125,12 @@ export function Subscribe() {
     return res;
   };
 
+  const fetchCkbPrice = async () => {
+    const priceApi = new Price();
+    const ckbPrice = await priceApi.ckbUsd();
+    setCkbPrice(ckbPrice);
+  };
+
   const avatars =
     baseUri && baseUri.length > 0
       ? nftImages.map((i, index) => (
@@ -151,14 +160,15 @@ export function Subscribe() {
               <Text lineHeight={2}>Author: {author}</Text>
               <Text lineHeight={2}></Text>
               <Text lineHeight={2}>
-                Current Price: {tokenPrice} CKB, {"    "}Total Subscribers:{" "}
-                {totalTokens}
+                Current Price: {tokenPrice} CKB(
+                {(+ckbPrice! * +tokenPrice!).toFixed(2)} USD), {"    "}Total
+                Subscribers: {totalTokens}
               </Text>
             </Card>
             <div style={styles.subArea}>
               <p style={styles.hintText}>
-                by subscribe, you will be able to read the content and mint an
-                unique Erc721 readership token. <a href="/nft">more info</a>
+                By subscribe, you will be able to read the content and mint an
+                unique Erc721 readership token. <a href="/nft">More info</a>
               </p>
               <Button
                 onClick={subscribeBtn}

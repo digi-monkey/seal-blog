@@ -7,6 +7,7 @@ import { styles } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
 import { avatar } from "../../api";
+import { Price } from "../../api/price";
 
 const api = new Api(API_SERVER_URL);
 
@@ -24,6 +25,11 @@ export function Token(props: NftManagerProp) {
   const [nftUrl, setNftUrl] = useState<string>();
   const [isDeployed, setIsDeployed] = useState(false);
   const [deployedContractAddr, setDeployedContractAddr] = useState<string>();
+  const [ckbPrice, setCkbPrice] = useState<string>();
+
+  useEffect(() => {
+    fetchCkbPrice();
+  }, []);
 
   useEffect(() => {
     fetchContractAddress();
@@ -82,6 +88,12 @@ export function Token(props: NftManagerProp) {
     }
   };
 
+  const fetchCkbPrice = async () => {
+    const priceApi = new Price();
+    const ckbPrice = await priceApi.ckbUsd();
+    setCkbPrice(ckbPrice);
+  };
+
   const deploy = async () => {
     if (isDeployed) {
       const isConfirm = window.confirm(
@@ -90,7 +102,7 @@ export function Token(props: NftManagerProp) {
       if (!isConfirm) return;
     }
 
-    const tokenPrice = promptInputTokenPrice();
+    const tokenPrice = await promptInputTokenPrice();
     if (tokenPrice == null) {
       return;
     }
@@ -129,7 +141,7 @@ export function Token(props: NftManagerProp) {
       return alert("contract address is null, have you deploy yet?");
     }
 
-    const tokenPrice = promptInputTokenPrice();
+    const tokenPrice = await promptInputTokenPrice();
     if (tokenPrice == null) {
       return;
     }
@@ -206,8 +218,11 @@ export function Token(props: NftManagerProp) {
     fetchBaseUri();
   };
 
-  const promptInputTokenPrice = () => {
-    const price = window.prompt("Please enter CKB price per token", "100");
+  const promptInputTokenPrice = async () => {
+    const price = window.prompt(
+      `Please enter CKB price per your NFT token`,
+      "100"
+    );
     if (price == null) {
       alert("price is null");
       return null;
@@ -263,6 +278,7 @@ export function Token(props: NftManagerProp) {
   return (
     <div>
       <Card style={{ padding: "10px", margin: "20px 0", borderRadius: "5px" }}>
+        <Text>CKB/USD: {ckbPrice}</Text>
         <h1>Your Readership NFT</h1>
         {isDeployed && (
           <div>
@@ -271,14 +287,16 @@ export function Token(props: NftManagerProp) {
             </Text>
 
             <Text>
-              {"Token Price: " + tokenPrice} CKB --
+              {"Token Price: " + tokenPrice} CKB(
+              {(+ckbPrice! * tokenPrice).toFixed(2)} USD) --
               <a href="" onClick={changeTokenPrice}>
                 Change Token Price
               </a>
             </Text>
 
             <Text>
-              {"Balance: " + balance} CKB --
+              {"Balance: " + balance} CKB({(+ckbPrice! * balance).toFixed(2)}{" "}
+              USD) --
               <a href="" onClick={withdrawBalance}>
                 Withdraw
               </a>
