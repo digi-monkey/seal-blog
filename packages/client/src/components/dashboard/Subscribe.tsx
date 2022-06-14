@@ -137,11 +137,11 @@ export function Subscribe() {
           <img
             key={index}
             style={{ width: "60px", height: "60px" }}
-            src={i + ".svg"}
+            src={i}
             alt=""
           />
         ))
-      : nftImages.map((i, index) => <span key={index}>nft metadata: {i}</span>);
+      : "";
 
   return (
     <div style={styles.root}>

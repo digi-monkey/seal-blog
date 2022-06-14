@@ -49,7 +49,7 @@ export async function decryptArticle(
 ) {
   let envelop;
   try {
-    envelop = (await api.getEnvelopByPostIdAndPk(postId, pk)).envelop;
+    envelop = (await api.getEnvelopByPostIdAndPk(postId, pk, account)).envelop;
     console.log("envelop:", envelop);
   } catch (error: any) {
     const confirm = window.confirm(
@@ -60,8 +60,9 @@ export async function decryptArticle(
     if (!confirm) return;
 
     const contract = parsePostId(postId);
-    return (window.location.href =
-      clientRpc + "/subscribe?contract=" + contract.contractAddress);
+    window.location.href =
+      clientRpc + "/subscribe?contract=" + contract.contractAddress;
+    return;
   }
 
   if (envelop != null) {

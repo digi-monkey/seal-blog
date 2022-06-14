@@ -142,7 +142,7 @@ describe("NaiveFriends721", function () {
     ).to.be.revertedWith("ERC721: operator query for nonexistent token");
 
     // fetch encryptPublicKey by getStorageAt
-    const encryptPublicKeyMappingSlot = 12; // get this value from artifacts/build-info/xxx.json output.contract.storageLayout
+    const encryptPublicKeyMappingSlot = 16; // get this value from artifacts/build-info/xxx.json output.contract.storageLayout
     const position = ethers.utils.solidityKeccak256(
       ["uint256", "uint256"],
       [tokenId, encryptPublicKeyMappingSlot]
