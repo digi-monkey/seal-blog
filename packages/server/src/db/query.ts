@@ -101,12 +101,6 @@ export class Query {
     });
   }
 
-  async getContractByPostId(postId: string) {
-    return await this.findFirstOne(this.database.contracts(), {
-      postId: postId,
-    });
-  }
-
   async getEnvelopsByPostId(postId: string) {
     return await this.find(this.database.envelops(), {
       postId: postId,

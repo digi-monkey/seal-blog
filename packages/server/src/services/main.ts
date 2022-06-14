@@ -17,7 +17,7 @@ import {
   HexStr,
   parsePostId,
 } from "@seal-blog/sdk";
-import { provider, ZERO_ADDRESS } from "../web3";
+import { provider } from "../web3";
 import CONTRACT_ARTIFACTS from "../configs/blockchain/contract-artifact.json";
 import { ethers } from "ethers";
 
@@ -99,11 +99,60 @@ export class MainService extends Service {
 
   async get_envelop_by_post_id_and_pk() {
     const postId = this.req.query.post_id;
+    const account = this.req.query.account;
     const pk = this.req.query.pk;
     const envelop = await this.query.getEnvelopByPostIdAndPk(postId, pk);
     if (envelop == null) {
-      throw new Error(`envelop not found, hashId: ${postId}, pk: ${pk}`);
+      // try to check if the account is the token holder
+      const contractAddress = parsePostId(postId).contractAddress;
+
+      const accessToken = new ethers.Contract(
+        contractAddress,
+        CONTRACT_ARTIFACTS.abi,
+        provider
+      );
+      const balance = await accessToken.balanceOf(account);
+      if (balance == 0) {
+        throw new Error(
+          `not a token holder, contract: ${contractAddress}, account: ${account}`
+        );
+      }
+
+      // get pk of first token
+      // todo: handle all tokens
+      const firstTokenId = await accessToken.tokenOfOwnerByIndex(account, 0);
+      const firstPk = await accessToken.encryptPublicKeys(firstTokenId);
+      if (firstPk == null) {
+        throw new Error(
+          `encryptPublicKey not set, contract: ${contractAddress}, tokenId: ${firstTokenId}`
+        );
+      }
+
+      // generate envelop for this pk
+      const keyObj = await this.query.getKeyByPostId(postId);
+      if (keyObj == null) {
+        throw new Error(`key not found, hashId: ${postId}`);
+      }
+      const key = keyObj.key;
+      const iv = keyObj.iv;
+      const newEnvelop: string = await encryptAesKeyAndIv(pk, key, iv);
+
+      // store the envelop data to db
+      const envelopDbData: Envelop = {
+        postId,
+        pk,
+        envelop: newEnvelop,
+      };
+      const res = await this.query.insertEnvelops([envelopDbData]);
+      if (typeof res != "string") {
+        res.acknowledged === false
+          ? logger.error(`insert envelops failed`, res)
+          : logger.info(`insert envelops,`, res);
+      }
+
+      return envelopDbData;
     }
+
     return envelop;
   }
 
@@ -125,12 +174,7 @@ export class MainService extends Service {
       provider
     );
 
-    const _filter = await accessToken.filters.Transfer(ZERO_ADDRESS);
-    const filter = {
-      ..._filter,
-      ...{ fromBlock: "earliest", toBlock: "latest" },
-    };
-    const length = (await provider.getLogs(filter)).length;
+    const length = await accessToken.totalSupply();
     logger.info("getTotalTokenCount:" + length);
     const pks: string[] = [];
     // todo: opt

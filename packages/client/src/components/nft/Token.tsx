@@ -97,7 +97,7 @@ export function Token(props: NftManagerProp) {
   const deploy = async () => {
     if (isDeployed) {
       const isConfirm = window.confirm(
-        "you already has an nft contract, deployed a new one?"
+        "You already has an nft contract! This might abandon the previous NFT usage in current Seal version!\n\nStill want to deploy a new one?"
       );
       if (!isConfirm) return;
     }
@@ -316,22 +316,23 @@ export function Token(props: NftManagerProp) {
               {"NFT BaseURI: " + nftUrl}
               --
               <a href="" onClick={setBaseUri}>
-                set base uri
+                Set Base URI
               </a>
             </Text>
-            {nftUrl && nftUrl.length === 0 && (
+            {(!nftUrl || (nftUrl && nftUrl.length === 0)) && (
               <div>
                 <Text>
-                  You can set token base uri to show different image for your
-                  NFT like below
+                  BaseURI is not set. You can set token base uri to show
+                  different image for your NFT like below
                 </Text>
                 <img
                   style={{ width: "100px", height: "100px" }}
                   src={`data:image/svg+xml;utf8,${encodeURIComponent(
                     avatar.random()
                   )}`}
-                  alt=""
+                  alt="example uri"
                 />
+                example uri to render NFT img
               </div>
             )}
           </div>

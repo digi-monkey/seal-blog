@@ -142,12 +142,13 @@ export class Api extends base {
     );
   }
 
-  async getEnvelopByPostIdAndPk(postId: string, pk: string) {
+  async getEnvelopByPostIdAndPk(postId: string, pk: string, account: string) {
     return await this.httpRequest(
       "get_envelop_by_post_id_and_pk",
       {
         post_id: postId,
         pk,
+        account,
       },
       HttpProtocolMethod.get
     );
