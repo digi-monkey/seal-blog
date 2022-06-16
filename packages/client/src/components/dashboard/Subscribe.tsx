@@ -1,4 +1,4 @@
-import { Api, getEncryptionPublicKey, HexStr } from "@seal-blog/sdk";
+import { Api, getEncryptionPublicKey, HexNum, HexStr } from "@seal-blog/sdk";
 import { Button, Heading, Text } from "degen";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -42,9 +42,14 @@ function useQuery() {
 export function Subscribe() {
   let query = useQuery();
   const _contractAddress: HexStr | null = query.get("contract");
+  const selectChainId: HexNum | null = query.get("chain_id");
   if (_contractAddress == null) {
     throw new Error("contractAddress is null in query");
   }
+  if (selectChainId == null) {
+    throw new Error("_chainId is null in query");
+  }
+
   const contractAddress: HexStr = web3Util.toChecksumAddress(_contractAddress);
   contractFactory.options.address = contractAddress;
 
@@ -74,7 +79,7 @@ export function Subscribe() {
   }, [totalTokens]);
 
   const requestAuthor = async () => {
-    const au = await api.getContractOwner(contractAddress);
+    const au = await api.getContractOwner(selectChainId, contractAddress);
     setAuthor(au);
   };
 

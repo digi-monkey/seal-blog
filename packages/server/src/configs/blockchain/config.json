@@ -1,19 +1,48 @@
 {
-  "polyjuice": {
-    "mainnet": {
-      "chainId": "fill me later",
-      "rpc": "fill me later",
-      "chainName": "Godwoken Mainnet",
+  "networks": {
+    "0x1": {
+      "chainId": "0x1",
+      "rpc": "https://ethereumnodelight.app.runonflux.io",
+      "chainName": "Ethereum Mainnet",
       "nativeCurrency": {
-        "name": "Godwoken",
-        "symbol": "CKB",
+        "name": "Ether",
+        "symbol": "ETH",
         "decimals": 18
       },
-      "blockExplorerUrl": "fill me later",
-      "depositEntry": "fill me later",
-      "helpEntry": "fill me later"
+      "blockExplorerUrl": "https://etherscan.io/",
+      "depositEntry": null,
+      "helpEntry": "https://ethereum.org/en/developers/docs"
     },
-    "testnet": {
+
+    "0x4": {
+      "chainId": "0x4",
+      "rpc": "https://rinkeby.infura.io/v3/",
+      "chainName": "Ethereum Rinkeby Testnet",
+      "nativeCurrency": {
+        "name": "Ether",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      "blockExplorerUrl": "https://rinkeby.etherscan.io/",
+      "depositEntry": null,
+      "helpEntry": "https://ethereum.org/en/developers/docs"
+    },
+
+    "0x38": {
+      "chainId": "0x38",
+      "rpc": "https://bsc-dataseed2.binance.org",
+      "chainName": "Binance Smart Chain Mainnet",
+      "nativeCurrency": {
+        "name": "BNB",
+        "symbol": "BNB",
+        "decimals": 18
+      },
+      "blockExplorerUrl": "https://www.bscscan.com/",
+      "depositEntry": null,
+      "helpEntry": "https://docs.bnbchain.org/"
+    },
+
+    "0x116e9": {
       "chainId": "0x116e9",
       "rpc": "https://godwoken-testnet-v1.ckbapp.dev",
       "chainName": "Godwoken Testnet",
@@ -26,7 +55,8 @@
       "depositEntry": "https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1",
       "helpEntry": "https://startwithnervos.com/godwoken"
     },
-    "devnet": {
+
+    "0x116e8": {
       "chainId": "0x116e8",
       "rpc": "http://localhost:8024",
       "chainName": "Godwoken Devnet",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Card } from "@material-ui/core";
 import { Text } from "degen";
 import { contractFactory, CONTRACT_ARTIFACT, web3 } from "../../api/web3";
@@ -8,6 +8,7 @@ import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
 import { avatar } from "../../api";
 import { Price } from "../../api/price";
+import { Context } from "../../hooks/useContext";
 
 const api = new Api(API_SERVER_URL);
 
@@ -26,6 +27,8 @@ export function Token(props: NftManagerProp) {
   const [isDeployed, setIsDeployed] = useState(false);
   const [deployedContractAddr, setDeployedContractAddr] = useState<string>();
   const [ckbPrice, setCkbPrice] = useState<string>();
+
+  const chainId = useContext(Context).network.selectChainId;
 
   useEffect(() => {
     fetchCkbPrice();
@@ -78,9 +81,10 @@ export function Token(props: NftManagerProp) {
 
   const fetchContractAddress = async () => {
     if (!account) return;
+    if (!chainId) return;
 
     try {
-      const addr = await api.getContractAddress(account);
+      const addr = await api.getContractAddress(chainId!, account);
       setDeployedContractAddr(addr);
       setIsDeployed(true);
     } catch (error: any) {
@@ -128,7 +132,7 @@ export function Token(props: NftManagerProp) {
         const address = receipt.contractAddress;
         setDeployedContractAddr(address);
         const txHash = receipt.transactionHash;
-        const res = await api.bindContract(txHash);
+        const res = await api.bindContract(chainId!, txHash);
         console.log("bind contract:", res);
       });
   };

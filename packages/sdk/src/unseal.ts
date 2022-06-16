@@ -61,7 +61,8 @@ export async function decryptArticle(
 
     const contract = parsePostId(postId);
     window.location.href =
-      clientRpc + "/subscribe?contract=" + contract.contractAddress;
+      clientRpc +
+      `/subscribe?chain_id=${contract.chainId}&contract=${contract.contractAddress}`;
     return;
   }
 

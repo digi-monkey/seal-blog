@@ -100,7 +100,7 @@ export function Write() {
 
   const getContractAddress = async (account: string) => {
     try {
-      const addr = await api.getContractAddress(account);
+      const addr = await api.getContractAddress(chainId!, account);
       setContractAddress(addr);
     } catch (error: any) {
       alert("You need to create readership NFT first, err:" + error.message);

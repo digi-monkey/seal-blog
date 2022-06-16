@@ -1,20 +1,31 @@
 import { Card } from "@material-ui/core";
-import { configChain } from "../../api";
+import { useContext } from "react";
+import { getChainNetwork } from "../../configs";
+import { Context } from "../../hooks/useContext";
 
 export function Network() {
+  const chainId = useContext(Context).network.selectChainId;
   return (
     <Card style={{ padding: "15px" }}>
-      On {"<"}
-      {configChain.chainName}
-      {">"}
-      {",  "}First time on this network? Use{" "}
-      <a target={"_blank"} href={configChain.depositEntry}>
-        Deposit Entry
-      </a>
-      {"  "} or{" "}
-      <a target={"_blank"} href={configChain.helpEntry}>
-        More Help
-      </a>
+      {chainId && (
+        <span>
+          On {"<"}
+          {getChainNetwork(chainId).chainName}
+          {">"}
+          {",  "}First time on this network? Use{" "}
+          <a
+            target={"_blank"}
+            href={getChainNetwork(chainId).depositEntry || ""}
+          >
+            Deposit Entry
+          </a>
+          {"  "} or{" "}
+          <a target={"_blank"} href={getChainNetwork(chainId).helpEntry || ""}>
+            More Help
+          </a>
+        </span>
+      )}
+      {chainId == null && <div>No network, Please Select ChainId..</div>}
     </Card>
   );
 }

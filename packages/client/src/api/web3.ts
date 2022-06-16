@@ -1,33 +1,12 @@
 import ContractArtifact from "../configs/blockchain/contract-artifact.json";
-import CONFIG from "../configs/blockchain/config.json";
-import { envConfig } from "../configs/env-config";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { Contract } from "web3-eth-contract";
 import { HexStr } from "@seal-blog/sdk";
 
-export const getConfigBlockchainNetwork = () => {
-  const networkType = envConfig.networkType;
-  switch (networkType) {
-    case "devnet":
-      return CONFIG.polyjuice.devnet;
-    case "testnet":
-      return CONFIG.polyjuice.testnet;
-    case "mainnet":
-      return CONFIG.polyjuice.mainnet;
-    default:
-      return CONFIG.polyjuice.devnet;
-  }
-};
-
-export const configChain = getConfigBlockchainNetwork();
-console.log(envConfig.networkType, configChain);
-export const configChainRpcUrl = configChain.rpc;
-export const configChainId = configChain.chainId;
-
 export const CONTRACT_ARTIFACT = ContractArtifact;
 
-export const web3 = new Web3(Web3.givenProvider || configChainRpcUrl);
+export const web3 = new Web3(Web3.givenProvider);
 export const contractFactory = new web3.eth.Contract(
   CONTRACT_ARTIFACT.abi as AbiItem[]
 );

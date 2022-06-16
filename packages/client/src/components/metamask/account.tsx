@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Button, IconUserSolid, IconWallet, Stack } from "degen";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, IconUserSolid, IconWallet, IconCog, Stack } from "degen";
 import { Grid } from "@material-ui/core";
-import { configChainId, configChainRpcUrl, configChain } from "../../api";
+import { PopupSelectChainId, SettingMenu } from "../setting/setting";
+import { getChainNetwork } from "../../configs";
+import { HexNum } from "@seal-blog/sdk";
+import { Context } from "../../hooks/useContext";
 
 const styles = {
   siteName: {
@@ -26,9 +29,12 @@ export interface AccountProp {
 }
 
 export function Account(prop: AccountProp) {
+  const selectChainId = useContext(Context).network.selectChainId;
+
   const [account, setAccount] = useState<string>();
   const [encryptionPublicKey, setEncryptionPublicKey] = useState<string>();
   const [chainId, setChainId] = useState<string>();
+  const [openSettingMenu, setOpenSettingMenu] = useState<boolean>(false);
 
   useEffect(() => {
     connectWallet();
@@ -58,7 +64,21 @@ export function Account(prop: AccountProp) {
     if (chainId != null && prop.chainIdCallBack != null) {
       prop.chainIdCallBack(chainId);
     }
+    if (chainId && selectChainId && chainId !== selectChainId) {
+      const toSwitch = window.confirm(
+        `Your metamask network(${chainId}) is different with your setting network(${selectChainId})! Please switch back to right one or change your setting!`
+      );
+      if (toSwitch) {
+        requestSwitchingNetwork(selectChainId);
+      }
+    }
   }, [chainId]);
+
+  useEffect(() => {
+    if (selectChainId != null) {
+      requestSwitchingNetwork(selectChainId);
+    }
+  }, [selectChainId]);
 
   const connectWallet = async () => {
     if (!account) {
@@ -87,7 +107,6 @@ export function Account(prop: AccountProp) {
         method: "net_version",
       });
       await setChainId(chainId);
-      await requestNetwork();
       listenForChainChanged();
     }
   };
@@ -129,26 +148,27 @@ export function Account(prop: AccountProp) {
     }
   };
 
-  const requestNetwork = async () => {
-    if (chainId === configChainId) return;
+  const requestSwitchingNetwork = async (selectChainId: HexNum) => {
+    const configChain = getChainNetwork(selectChainId!);
+    if (chainId === selectChainId) return;
 
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: configChainId }],
+        params: [{ chainId: selectChainId }],
       });
     } catch (e: any) {
       if (e.code === 4902) {
         try {
           let network: any = {
-            chainId: configChainId,
+            chainId: selectChainId,
             chainName: configChain.chainName,
             nativeCurrency: {
               name: configChain.nativeCurrency.name,
               symbol: configChain.nativeCurrency.symbol, // 2-6 characters long
               decimals: configChain.nativeCurrency.decimals,
             },
-            rpcUrls: [configChainRpcUrl],
+            rpcUrls: [configChain.rpc],
           };
           if (configChain.blockExplorerUrl != null) {
             network.blockExplorerUrls = [configChain.blockExplorerUrl];
@@ -178,14 +198,14 @@ export function Account(prop: AccountProp) {
             </a>
           </div>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <Stack align={"center"}>
             <Button
               prefix={<IconWallet />}
               variant="secondary"
               width={{ xs: "full", md: "max" }}
             >
-              {encryptionPublicKey}
+              {encryptionPublicKey?.slice(0, 18)}..
             </Button>
           </Stack>
         </Grid>
@@ -198,6 +218,23 @@ export function Account(prop: AccountProp) {
             >
               {showShortEthAddress(account)}
             </Button>
+            <PopupSelectChainId />
+          </Stack>
+        </Grid>
+        <Grid item xs={2}>
+          <Stack align={"flex-end"}>
+            <Button
+              prefix={<IconCog />}
+              variant="secondary"
+              width={{ xs: "full", md: "max" }}
+              onClick={() => setOpenSettingMenu(!openSettingMenu)}
+            >
+              Setting
+            </Button>
+            <SettingMenu
+              open={openSettingMenu}
+              close={() => setOpenSettingMenu(false)}
+            />
           </Stack>
         </Grid>
       </Grid>

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Stack } from "degen";
 import { Grid } from "@material-ui/core";
 import ReactLoading from "react-loading";
 import { useLocation } from "react-router-dom";
-import { detectHtmlToAddButton, Api } from "@seal-blog/sdk";
+import { detectHtmlToAddButton, Api, parsePostId } from "@seal-blog/sdk";
 import { API_SERVER_URL, CLIENT_URL } from "../../configs";
 import web3Utils from "web3-utils";
+import { Context } from "../../hooks/useContext";
 
 const api = new Api(API_SERVER_URL);
 
@@ -110,6 +111,9 @@ export function Unseal() {
   if (postId == null) {
     throw new Error("postId is null in query");
   }
+  const chainId = parsePostId(postId).chainId;
+  useContext(Context).network.setSelectChainId(chainId);
+
   const [rawArticleData, setRawArticleData] = useState<string>();
   const [isRawArticleLoading, setIsRawArticleLoading] =
     useState<boolean>(false);
@@ -201,7 +205,9 @@ export function Unseal() {
                 Seal Blog
               </a>{" "}
               {"can't decrypt? you need to subscribe first!"}{" "}
-              <a href={`/subscribe?contract=${contractAddress}`}>
+              <a
+                href={`/subscribe?chain_id=${chainId}&contract=${contractAddress}`}
+              >
                 go to subscribe
               </a>{" "}
             </div>

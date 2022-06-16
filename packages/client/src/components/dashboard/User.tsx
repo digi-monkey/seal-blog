@@ -1,12 +1,14 @@
 import { Card, Grid } from "@material-ui/core";
 import { Heading, Text, Button, IconCog } from "degen";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Account } from "../metamask/account";
 import { Token } from "../nft/Token";
 import { styles as commonStyle } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
 import { API_SERVER_URL } from "../../configs";
 import { Network } from "../metamask/network";
+import { PopupSelectChainId } from "../setting/setting";
+import { Context } from "../../hooks/useContext";
 
 const api = new Api(API_SERVER_URL);
 
@@ -27,6 +29,8 @@ export function User() {
   const [encryptPk, setEncryptPk] = useState<string>();
   const [posts, setPosts] = useState<any[]>([]);
 
+  const chainId = useContext(Context).network.selectChainId;
+
   useEffect(() => {
     if (account) {
       getPosts();
@@ -35,7 +39,7 @@ export function User() {
 
   const write = async () => {
     try {
-      await api.getContractAddress(account!);
+      await api.getContractAddress(chainId!, account!);
     } catch (error: any) {
       return alert(
         "You need to create an Readership NFT first! err: " + error.message
@@ -46,7 +50,7 @@ export function User() {
 
   const getPosts = async () => {
     try {
-      const res = await api.getPostIds(account!);
+      const res = await api.getPostIds(chainId!, account!);
       console.log(res);
       setPosts(res);
     } catch (error: any) {
@@ -57,6 +61,7 @@ export function User() {
 
   return (
     <div style={styles.root}>
+      <PopupSelectChainId />
       <Account
         accountCallback={setAccount}
         encryptionPublicKeyCallback={setEncryptPk}

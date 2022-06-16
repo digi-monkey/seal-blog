@@ -1,5 +1,7 @@
 import { envConfig } from "./env-config";
 import config from "./constant.json";
+import { HexNum } from "@seal-blog/sdk";
+import CONFIG from "./blockchain/config.json";
 
 export const API_SERVER_URL =
   envConfig.mode === "development"
@@ -10,3 +12,31 @@ export const CLIENT_URL =
   envConfig.mode === "development"
     ? config.client_url.development
     : config.client_url.production;
+
+export interface ChainNetwork {
+  chainId: HexNum;
+  rpc: string;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorerUrl: string | null;
+  depositEntry: string | null;
+  helpEntry: string | null;
+}
+
+export interface ChainNetworkConfigs {
+  [chainId: HexNum]: ChainNetwork;
+}
+
+export const getChainNetwork = (chainId: HexNum) => {
+  const networks = CONFIG.networks as ChainNetworkConfigs;
+
+  if (!(chainId in networks)) {
+    throw new Error(`unsupported network! chainId: ${chainId}`);
+  }
+
+  return networks[chainId];
+};
