@@ -1,4 +1,4 @@
-import CONFIG from "./blockchain/config.json";
+import CONFIG from "./blockchain/networks.json";
 import { env } from "process";
 import { HexNum } from "@seal-blog/sdk";
 require("dotenv").config();

@@ -24,8 +24,7 @@ export function Network() {
               </a>
               {"  "} or
             </span>
-          )}
-          {" "}
+          )}{" "}
           <a
             target={"_blank"}
             href={getChainNetwork(chainId).helpEntry || "/404"}
@@ -35,7 +34,7 @@ export function Network() {
         </span>
       )}
       {chainId == null && <div>No network, Please Select ChainId..</div>}
-      <span>{" "} (Switch multi-chain in Setting)</span>
+      <span> (Switch multi-chain in Setting)</span>
     </Card>
   );
 }
