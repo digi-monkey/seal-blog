@@ -5,7 +5,11 @@ import { contractFactory, CONTRACT_ARTIFACT, web3 } from "../../api/web3";
 import web3Utils from "web3-utils";
 import { styles } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
-import { API_SERVER_URL } from "../../configs";
+import {
+  API_SERVER_URL,
+  getChainNetwork,
+  getTokenPriceIdBySymbol,
+} from "../../configs";
 import { avatar } from "../../api";
 import { Price } from "../../api/price";
 import { Context } from "../../hooks/useContext";
@@ -26,13 +30,21 @@ export function Token(props: NftManagerProp) {
   const [nftUrl, setNftUrl] = useState<string>();
   const [isDeployed, setIsDeployed] = useState(false);
   const [deployedContractAddr, setDeployedContractAddr] = useState<string>();
-  const [ckbPrice, setCkbPrice] = useState<string>();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState<string>();
+  const [nativeTokenSymbol, setNativeTokenSymbol] = useState<string>();
 
   const chainId = useContext(Context).network.selectChainId;
 
   useEffect(() => {
     fetchCkbPrice();
   }, []);
+
+  useEffect(() => {
+    if (chainId) {
+      const symbol = getChainNetwork(chainId).nativeCurrency.symbol;
+      setNativeTokenSymbol(symbol);
+    }
+  }, [chainId]);
 
   useEffect(() => {
     fetchContractAddress();
@@ -60,13 +72,13 @@ export function Token(props: NftManagerProp) {
   const fetchTokenPrice = async () => {
     const value = await contractFactory.methods.tokenPrice().call();
     const tokenPrice = web3Utils.fromWei(value);
-    setTokenPrice(parseInt(tokenPrice));
+    setTokenPrice(+tokenPrice);
   };
 
   const fetchContractBalance = async () => {
     const bal = await web3.eth.getBalance(deployedContractAddr!);
     const balance = web3Utils.fromWei(bal);
-    setBalance(parseInt(balance));
+    setBalance(+balance);
   };
 
   const fetchAdminAddress = async () => {
@@ -93,9 +105,15 @@ export function Token(props: NftManagerProp) {
   };
 
   const fetchCkbPrice = async () => {
+    if (!chainId) return;
+
     const priceApi = new Price();
-    const ckbPrice = await priceApi.ckbUsd();
-    setCkbPrice(ckbPrice);
+    const chainNetwork = getChainNetwork(chainId);
+    const tokenPriceId = getTokenPriceIdBySymbol(
+      chainNetwork.nativeCurrency.symbol
+    );
+    const ckbPrice = await priceApi.tokenUsd(tokenPriceId);
+    setNativeTokenPrice(ckbPrice);
   };
 
   const deploy = async () => {
@@ -224,7 +242,7 @@ export function Token(props: NftManagerProp) {
 
   const promptInputTokenPrice = async () => {
     const price = window.prompt(
-      `Please enter CKB price per your NFT token`,
+      `Please enter ${nativeTokenSymbol} price per your NFT token`,
       "100"
     );
     if (price == null) {
@@ -238,7 +256,7 @@ export function Token(props: NftManagerProp) {
 
   const promptInputWithdrawAmount = () => {
     const amount = window.prompt(
-      `Please enter withdraw amount(Max ${balance} CKB)`,
+      `Please enter withdraw amount(Max ${balance} ${nativeTokenSymbol})`,
       `${balance}`
     );
     if (amount == null) {
@@ -282,7 +300,9 @@ export function Token(props: NftManagerProp) {
   return (
     <div>
       <Card style={{ padding: "10px", margin: "20px 0", borderRadius: "5px" }}>
-        <Text>CKB/USD: {ckbPrice}</Text>
+        <Text>
+          {nativeTokenSymbol}/USD: {nativeTokenPrice}
+        </Text>
         <h1>Your Readership NFT</h1>
         {isDeployed && (
           <div>
@@ -291,16 +311,16 @@ export function Token(props: NftManagerProp) {
             </Text>
 
             <Text>
-              {"Token Price: " + tokenPrice} CKB(
-              {(+ckbPrice! * tokenPrice).toFixed(2)} USD) --
+              {"Token Price: " + tokenPrice} {nativeTokenSymbol}(
+              {(+nativeTokenPrice! * tokenPrice).toFixed(2)} USD) --
               <a href="" onClick={changeTokenPrice}>
                 Change Token Price
               </a>
             </Text>
 
             <Text>
-              {"Balance: " + balance} CKB({(+ckbPrice! * balance).toFixed(2)}{" "}
-              USD) --
+              {"Balance: " + balance} {nativeTokenSymbol}(
+              {(+nativeTokenPrice! * balance).toFixed(2)} USD) --
               <a href="" onClick={withdrawBalance}>
                 Withdraw
               </a>

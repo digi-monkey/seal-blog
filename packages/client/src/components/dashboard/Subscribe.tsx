@@ -3,7 +3,11 @@ import { Button, Heading, Text } from "degen";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { contractFactory, isSubscriber, subscribe } from "../../api";
-import { API_SERVER_URL } from "../../configs";
+import {
+  API_SERVER_URL,
+  getChainNetwork,
+  getTokenPriceIdBySymbol,
+} from "../../configs";
 import { Account } from "../metamask/account";
 import web3Util from "web3-utils";
 import { Card, Grid } from "@material-ui/core";
@@ -60,7 +64,10 @@ export function Subscribe() {
   const [totalTokens, setTotalTokens] = useState<string>();
   const [nftImages, setNftImages] = useState<string[]>([]);
   const [baseUri, setBaseUri] = useState<string>();
-  const [ckbPrice, setCkbPrice] = useState<string>();
+  const [nativeTokenPrice, setNativeTokenPrice] = useState<string>();
+  const [nativeTokenSymbol, _setNativeTokenSymbol] = useState<string>(
+    getChainNetwork(selectChainId).nativeCurrency.symbol
+  );
 
   useEffect(() => {
     requestAuthor();
@@ -132,8 +139,9 @@ export function Subscribe() {
 
   const fetchCkbPrice = async () => {
     const priceApi = new Price();
-    const ckbPrice = await priceApi.ckbUsd();
-    setCkbPrice(ckbPrice);
+    const id = getTokenPriceIdBySymbol(nativeTokenSymbol);
+    const price = await priceApi.tokenUsd(id);
+    setNativeTokenPrice(price);
   };
 
   const avatars =
@@ -165,9 +173,9 @@ export function Subscribe() {
               <Text lineHeight={2}>Author: {author}</Text>
               <Text lineHeight={2}></Text>
               <Text lineHeight={2}>
-                Current Price: {tokenPrice} CKB(
-                {(+ckbPrice! * +tokenPrice!).toFixed(2)} USD), {"    "}Total
-                Subscribers: {totalTokens}
+                Current Price: {tokenPrice} {nativeTokenSymbol}(
+                {(+nativeTokenPrice! * +tokenPrice!).toFixed(2)} USD), {"    "}
+                Total Subscribers: {totalTokens}
               </Text>
             </Card>
             <div style={styles.subArea}>

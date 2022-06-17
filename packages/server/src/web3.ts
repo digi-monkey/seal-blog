@@ -13,7 +13,6 @@ export const getAccessTokenContract = (postId: HexStr) => {
   const contractAddress = result.contractAddress;
   const _chainId: DecimalStr = result.chainId;
   const chainId: HexNum = "0x" + BigInt(_chainId).toString(16);
-  console.log(postId, _chainId, chainId);
   const provider = getProvider(chainId);
   const accessToken = new ethers.Contract(
     contractAddress,

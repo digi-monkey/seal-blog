@@ -1,5 +1,4 @@
 const defaultBaseUrl = "https://api.coingecko.com/api/v3";
-const ckbUsdPriceSubUrl = "/simple/price?ids=nervos-network&vs_currencies=usd";
 
 export class Price {
   baseUrl: string;
@@ -17,9 +16,15 @@ export class Price {
     }
   }
 
-  async ckbUsd(): Promise<string> {
-    const res = await this.sendRequest(this.baseUrl + ckbUsdPriceSubUrl);
+  async tokenUsd(tokenId: string) {
+    const subUrl = `/simple/price?ids=${tokenId}&vs_currencies=usd`;
+    const res = await this.sendRequest(this.baseUrl + subUrl);
     const resObj = JSON.parse(res);
-    return resObj["nervos-network"].usd;
+    if (!("usd" in resObj[tokenId])) {
+      throw new Error(
+        `request to ${this.baseUrl + subUrl} error, result: ${res}`
+      );
+    }
+    return resObj[tokenId].usd;
   }
 }

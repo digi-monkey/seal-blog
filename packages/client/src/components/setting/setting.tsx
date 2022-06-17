@@ -2,10 +2,9 @@ import { FormControl, Select } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import { HexNum } from "@seal-blog/sdk";
 import React, { useContext } from "react";
-import CONFIG from "../../configs/blockchain/config.json";
+import { CHAIN_NETWORKS } from "../../configs";
 import Popup from "reactjs-popup";
 import "./modal.css";
-import { ChainNetworkConfigs } from "../../configs";
 import { Context } from "../../hooks/useContext";
 import { LocalStore } from "../../localStore";
 import { Box, IconClose, Stack, Text } from "degen";
@@ -27,7 +26,7 @@ export function SelectChainId() {
     saveChainId(event.target.value as HexNum);
   };
 
-  const networks = CONFIG.networks as unknown as ChainNetworkConfigs;
+  const networks = CHAIN_NETWORKS;
   const chainIdList = Object.keys(networks);
   const chainIdSelect = chainIdList.map((id, index) => (
     <MenuItem key={index} value={id}>
