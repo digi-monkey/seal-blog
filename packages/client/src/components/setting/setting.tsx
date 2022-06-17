@@ -47,6 +47,7 @@ export function SelectChainId() {
           id="demo-simple-select"
           label="chainId"
           onChange={handleChange}
+          defaultValue={contextNetwork.selectChainId}
         >
           {chainIdSelect}
         </Select>

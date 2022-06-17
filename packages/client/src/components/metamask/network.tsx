@@ -9,23 +9,33 @@ export function Network() {
     <Card style={{ padding: "15px" }}>
       {chainId && (
         <span>
-          On {"<"}
+          {"<"}
           {getChainNetwork(chainId).chainName}
           {">"}
-          {",  "}First time on this network? Use{" "}
+          {",  "}First time on this network?
+          {getChainNetwork(chainId).depositEntry && (
+            <span>
+              Use{" "}
+              <a
+                target={"_blank"}
+                href={getChainNetwork(chainId).depositEntry!}
+              >
+                Deposit Entry
+              </a>
+              {"  "} or
+            </span>
+          )}
+          {" "}
           <a
             target={"_blank"}
-            href={getChainNetwork(chainId).depositEntry || ""}
+            href={getChainNetwork(chainId).helpEntry || "/404"}
           >
-            Deposit Entry
-          </a>
-          {"  "} or{" "}
-          <a target={"_blank"} href={getChainNetwork(chainId).helpEntry || ""}>
             More Help
           </a>
         </span>
       )}
       {chainId == null && <div>No network, Please Select ChainId..</div>}
+      <span>{" "} (Switch multi-chain in Setting)</span>
     </Card>
   );
 }

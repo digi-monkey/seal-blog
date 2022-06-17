@@ -44,6 +44,9 @@ export default function MyRouter() {
           <Route path="/nft">
             <Intro />
           </Route>
+          <Route path="/404">
+            <h1>404 not found</h1>
+          </Route>
           <Route path="/">
             <Home />
           </Route>
