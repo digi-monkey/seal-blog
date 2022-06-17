@@ -103,9 +103,10 @@ export function Account(prop: AccountProp) {
 
   const requestChainId = async () => {
     if (!chainId) {
-      const chainId = await window.ethereum.request({
+      let chainId = await window.ethereum.request({
         method: "net_version",
       });
+      chainId = "0x" + BigInt(chainId).toString(16);
       await setChainId(chainId);
       listenForChainChanged();
     }

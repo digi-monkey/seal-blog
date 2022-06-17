@@ -42,6 +42,20 @@
       "helpEntry": "https://docs.bnbchain.org/"
     },
 
+    "0x61": {
+      "chainId": "0x61",
+      "rpc": "https://data-seed-prebsc-1-s3.binance.org:8545",
+      "chainName": "Binance Smart Chain Testnet",
+      "nativeCurrency": {
+        "name": "BNB",
+        "symbol": "BNB",
+        "decimals": 18
+      },
+      "blockExplorerUrl": "https://testnet.bscscan.com/",
+      "depositEntry": null,
+      "helpEntry": "https://docs.bnbchain.org/"
+    },
+
     "0x116e9": {
       "chainId": "0x116e9",
       "rpc": "https://godwoken-testnet-v1.ckbapp.dev",

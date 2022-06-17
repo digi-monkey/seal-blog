@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { getChainNetwork } from "./configs/env-config";
 import CONTRACT_ARTIFACTS from "./configs/blockchain/contract-artifact.json";
-import { HexNum, HexStr, parsePostId } from "@seal-blog/sdk";
+import { HexNum, HexStr, DecimalStr, parsePostId } from "@seal-blog/sdk";
 
 export const getProvider = (chainId: HexNum) => {
   const network = getChainNetwork(chainId);
@@ -11,7 +11,9 @@ export const getProvider = (chainId: HexNum) => {
 export const getAccessTokenContract = (postId: HexStr) => {
   const result = parsePostId(postId);
   const contractAddress = result.contractAddress;
-  const chainId = result.chainId;
+  const _chainId: DecimalStr = result.chainId;
+  const chainId: HexNum = "0x" + BigInt(_chainId).toString(16);
+  console.log(postId, _chainId, chainId);
   const provider = getProvider(chainId);
   const accessToken = new ethers.Contract(
     contractAddress,

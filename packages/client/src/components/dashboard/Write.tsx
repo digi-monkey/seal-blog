@@ -8,6 +8,8 @@ import {
   generateRandomAesKey,
   generateRandomIv,
   addDecryptButton,
+  HexNum,
+  HexStr,
 } from "@seal-blog/sdk";
 import { Account } from "../metamask/account";
 import ReactMarkdown from "react-markdown";
@@ -27,7 +29,7 @@ const styles = {
 export function Write() {
   const [post, setPost] = useState("");
   const [account, setAccount] = useState<string>();
-  const [chainId, setChainId] = useState<string>();
+  const [chainId, setChainId] = useState<HexNum>();
   const [contractAddress, setContractAddress] = useState<string>();
 
   const [formInput, setFormInput] = useReducer(
@@ -40,17 +42,15 @@ export function Write() {
   );
 
   useEffect(() => {
-    if (account != null) {
-      getContractAddress(account);
+    if (account != null && chainId != null) {
+      getContractAddress(chainId, account);
     }
-  }, [account]);
+  }, [account, chainId]);
 
   const handleSubmit = async (evt: { preventDefault: () => void }) => {
     if (chainId == null || account == null) {
       return alert(`chain id / account not found!`);
     }
-
-    const chainIdHex = "0x" + BigInt(chainId).toString(16);
 
     evt.preventDefault();
     let data = { formInput };
@@ -61,12 +61,12 @@ export function Write() {
       key,
       iv,
       `${CLIENT_URL}/unseal`,
-      chainIdHex,
+      chainId,
       contractAddress!
     );
     setPost(t);
     console.log(t);
-    const res = await api.addPost(account, t, key, iv, postId, chainIdHex);
+    const res = await api.addPost(account, t, key, iv, postId, chainId);
     console.log(res);
 
     // add decrypt function
@@ -98,9 +98,10 @@ export function Write() {
     }, 300);
   };
 
-  const getContractAddress = async (account: string) => {
+  const getContractAddress = async (chainId: HexNum, account: HexStr) => {
     try {
-      const addr = await api.getContractAddress(chainId!, account);
+      const addr = await api.getContractAddress(chainId, account);
+      console.log("contractAddress: ", addr, chainId);
       setContractAddress(addr);
     } catch (error: any) {
       alert("You need to create readership NFT first, err:" + error.message);
