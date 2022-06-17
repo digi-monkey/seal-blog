@@ -1,3 +1,4 @@
+import { HexNum } from "@seal-blog/sdk";
 import {
   Collection,
   FindOptions,
@@ -7,7 +8,8 @@ import {
   OptionalUnlessRequiredId,
   InsertOneOptions,
 } from "mongodb";
-import { Contracts, Database, Envelop, Key, Posts, RawPost } from "./mongo";
+import { Database } from "./mongo";
+import { Contracts, Key, Posts, RawPost, Envelop } from "./types";
 
 const defaultDbSortOpt: Sort = { _id: "desc" };
 
@@ -89,14 +91,16 @@ export class Query {
   }
 
   // public methods
-  async getAccountByContract(contractAddress: string) {
+  async getAccountByContract(chainId: HexNum, contractAddress: string) {
     return await this.findFirstOne(this.database.contracts(), {
+      chainId,
       contractAddress,
     });
   }
 
-  async getContractByAccount(account: string) {
+  async getContractByAccount(chainId: HexNum, account: string) {
     return await this.findFirstOne(this.database.contracts(), {
+      chainId,
       account,
     });
   }
@@ -132,8 +136,8 @@ export class Query {
     });
   }
 
-  async getPostIdsByAccount(account: string) {
-    const contract = await this.getContractByAccount(account);
+  async getPostIdsByAccount(chainId: HexNum, account: string) {
+    const contract = await this.getContractByAccount(chainId, account);
     if (contract == null) {
       return undefined;
     }

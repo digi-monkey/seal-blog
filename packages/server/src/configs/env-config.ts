@@ -1,9 +1,9 @@
-import CONFIG from "./blockchain/config.json";
+import CONFIG from "./blockchain/networks.json";
 import { env } from "process";
+import { HexNum } from "@seal-blog/sdk";
 require("dotenv").config();
 
 export const envConfig = {
-  networkType: getRequired("BLOCKCHAIN_NETWORK"),
   port: getRequired("PORT"),
 };
 
@@ -20,18 +20,30 @@ function _getOptional(name: string): string | undefined {
   return env[name];
 }
 
-export const getConfigBlockchainNetwork = () => {
-  const networkType = envConfig.networkType;
-  switch (networkType) {
-    case "devnet":
-      return CONFIG.polyjuice.devnet;
-    case "testnet":
-      return CONFIG.polyjuice.testnet;
-    case "mainnet":
-      return CONFIG.polyjuice.mainnet;
-    default:
-      return CONFIG.polyjuice.devnet;
-  }
-};
+export interface ChainNetwork {
+  chainId: HexNum;
+  rpc: string;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorerUrl: string | null;
+  depositEntry: string | null;
+  helpEntry: string | null;
+}
 
-export const configNetworkUrl = getConfigBlockchainNetwork().rpc;
+export interface ChainNetworkConfigs {
+  [chainId: HexNum]: ChainNetwork;
+}
+
+export const getChainNetwork = (chainId: HexNum) => {
+  const networks = CONFIG.networks as ChainNetworkConfigs;
+
+  if (!(chainId in networks)) {
+    throw new Error(`unsupported network! chainId: ${chainId}`);
+  }
+
+  return networks[chainId];
+};

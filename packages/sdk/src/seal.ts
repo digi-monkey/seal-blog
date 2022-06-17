@@ -5,7 +5,7 @@ import {
   getFullMatchSealedSplitter,
   SEALED_SPLITTER_REGEX,
 } from "./regex";
-import { HexStr } from "./types";
+import { DecimalStr, HexStr } from "./types";
 const { version } = require("../package.json");
 
 export function sealPost(
@@ -81,7 +81,9 @@ export function parsePostId(postId: HexStr) {
     );
   }
 
-  const chainId = BigInt("0x" + postId.slice(2, 16)).toString();
+  const chainId: DecimalStr = BigInt(
+    "0x" + postId.slice(2).slice(0, 16)
+  ).toString();
   const contractAddress = "0x" + postId.slice(2).slice(16, 56);
   const hashId = "0x" + postId.slice(56);
   return {

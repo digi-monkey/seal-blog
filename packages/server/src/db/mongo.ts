@@ -1,5 +1,6 @@
-import { Collection, Db, MongoClient, Document } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 import { logger } from "../logger";
+import { Key, Envelop, RawPost, Contracts, Posts } from "./types";
 
 const defaultUrl = "mongodb://localhost:27017";
 const defaultDbName = "seal-blogblog";
@@ -34,33 +35,6 @@ const _schemeValidator = {
     },
   },
 };
-
-export interface Key extends Document {
-  postId: string; // the encrypt text sha1 hash id, also work as post id to locate a raw post
-  key: string;
-  iv: string;
-}
-
-export interface Envelop extends Document {
-  postId: string;
-  pk: string;
-  envelop: string;
-}
-
-export interface RawPost extends Document {
-  postId: string; // also the post id
-  text: string;
-}
-
-export interface Posts extends Document {
-  contractAddress: string;
-  postId: string;
-}
-
-export interface Contracts extends Document {
-  account: string;
-  contractAddress: string;
-}
 
 export class Database {
   private client: MongoClient;

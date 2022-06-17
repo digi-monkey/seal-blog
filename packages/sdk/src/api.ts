@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Base64Str, HexStr } from "./types";
+import { Base64Str, HexNum, HexStr } from "./types";
 const { version } = require("../package.json");
 
 export const DEFAULT_API_URL = "http://localhost:9112";
@@ -154,30 +154,33 @@ export class Api extends base {
     );
   }
 
-  async bindContract(txHash: string) {
+  async bindContract(chainId: HexNum, txHash: HexStr) {
     return await this.httpRequest(
       "bind_contract",
       {
+        chain_id: chainId,
         tx_hash: txHash,
       },
       HttpProtocolMethod.post
     );
   }
 
-  async getContractOwner(contractAddr: string) {
+  async getContractOwner(chainId: HexNum, contractAddr: HexStr) {
     return await this.httpRequest(
       "get_contract_owner",
       {
+        chain_id: chainId,
         contract_address: contractAddr,
       },
       HttpProtocolMethod.get
     );
   }
 
-  async getContractAddress(account: string) {
+  async getContractAddress(chainId: HexNum, account: string) {
     return await this.httpRequest(
       "get_contract_address",
       {
+        chain_id: chainId,
         account,
       },
       HttpProtocolMethod.get
@@ -194,10 +197,11 @@ export class Api extends base {
     );
   }
 
-  async getPostIds(account: string) {
+  async getPostIds(chainId: HexNum, account: HexStr) {
     return await this.httpRequest(
       "get_post_ids",
       {
+        chain_id: chainId,
         account,
       },
       HttpProtocolMethod.get

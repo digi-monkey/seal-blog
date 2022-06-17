@@ -15,11 +15,9 @@ import {
   encryptAesKeyAndIv,
   calcPostId,
   HexStr,
-  parsePostId,
 } from "@seal-blog/sdk";
-import { provider } from "../web3";
+import { getAccessTokenContract, getProvider } from "../web3";
 import CONTRACT_ARTIFACTS from "../configs/blockchain/contract-artifact.json";
-import { ethers } from "ethers";
 
 const service_name = `Seal Api Server`;
 
@@ -45,7 +43,7 @@ export class MainService extends Service {
 
     logger.info(account, rawPost, key, _postId);
 
-    const contractObj = await this.query.getContractByAccount(account);
+    const contractObj = await this.query.getContractByAccount(chainId, account);
     if (contractObj == null) {
       throw new Error(`contractObj not found, account: ${account}`);
     }
@@ -104,17 +102,11 @@ export class MainService extends Service {
     const envelop = await this.query.getEnvelopByPostIdAndPk(postId, pk);
     if (envelop == null) {
       // try to check if the account is the token holder
-      const contractAddress = parsePostId(postId).contractAddress;
-
-      const accessToken = new ethers.Contract(
-        contractAddress,
-        CONTRACT_ARTIFACTS.abi,
-        provider
-      );
+      const accessToken = getAccessTokenContract(postId);
       const balance = await accessToken.balanceOf(account);
       if (balance == 0) {
         throw new Error(
-          `not a token holder, contract: ${contractAddress}, account: ${account}`
+          `not a token holder, contract: ${accessToken.address}, account: ${account}`
         );
       }
 
@@ -124,7 +116,7 @@ export class MainService extends Service {
       const firstPk = await accessToken.encryptPublicKeys(firstTokenId);
       if (firstPk == null) {
         throw new Error(
-          `encryptPublicKey not set, contract: ${contractAddress}, tokenId: ${firstTokenId}`
+          `encryptPublicKey not set, contract: ${accessToken.address}, tokenId: ${firstTokenId}`
         );
       }
 
@@ -166,13 +158,7 @@ export class MainService extends Service {
     const key = keyObj.key;
     const iv = keyObj.iv;
 
-    const contractAddress = parsePostId(postId).contractAddress;
-
-    const accessToken = new ethers.Contract(
-      contractAddress,
-      CONTRACT_ARTIFACTS.abi,
-      provider
-    );
+    const accessToken = getAccessTokenContract(postId);
 
     const length = await accessToken.totalSupply();
     logger.info("getTotalTokenCount:" + length);
@@ -205,6 +191,10 @@ export class MainService extends Service {
   @allowType(HttpProtocolMethod.post)
   async bind_contract() {
     let txHash = this.req.body.data.tx_hash;
+    // todo: check if replay attack is possible?
+    let chainId = this.req.body.data.chain_id;
+
+    const provider = getProvider(chainId);
     const receipt = await provider.getTransactionReceipt(txHash);
     if (receipt.status !== 1) {
       throw new Error(`tx receipt status !== 1, txHash: ${txHash}`);
@@ -224,8 +214,9 @@ export class MainService extends Service {
       );
     }
 
-    logger.info(account, contractAddress);
+    logger.info("to bind contract: ", chainId, account, contractAddress);
     const contractDoc: Contracts = {
+      chainId,
       account,
       contractAddress,
     };
@@ -235,10 +226,11 @@ export class MainService extends Service {
   }
 
   async get_contract_owner() {
+    const chainId = this.req.query.chain_id;
     const addr = this.req.query.contract_address;
     if (addr == null) throw new Error("contract_address params is null");
 
-    const result = await this.query.getAccountByContract(addr);
+    const result = await this.query.getAccountByContract(chainId, addr);
     if (result == null) {
       throw new Error(`account not found, contract address: ${addr}`);
     }
@@ -247,8 +239,9 @@ export class MainService extends Service {
   }
 
   async get_contract_address() {
+    const chainId = this.req.query.chain_id;
     const account = this.req.query.account;
-    const contractObj = await this.query.getContractByAccount(account);
+    const contractObj = await this.query.getContractByAccount(chainId, account);
     if (contractObj == null) {
       throw new Error(`contract not found, account: ${account}`);
     }
@@ -267,10 +260,14 @@ export class MainService extends Service {
   }
 
   async get_post_ids() {
+    const chainId = this.req.query.chain_id;
     const account = this.req.query.account;
-    const contractObj = await this.query.getContractByAccount(account);
+
+    const contractObj = await this.query.getContractByAccount(chainId, account);
     if (contractObj == null) {
-      throw new Error(`contract not found, account: ${account}`);
+      throw new Error(
+        `contract not found, account: ${account}, chainId: ${chainId}`
+      );
     }
 
     const posts = await this.query.getPosts(contractObj.contractAddress);
@@ -303,17 +300,7 @@ export class MainService extends Service {
       throw new Error(`post not found, post id: ${postId}`);
     }
 
-    const contractAddress = post.contractAddress;
-    const account = await this.query.getAccountByContract(contractAddress);
-    if (account == null) {
-      throw new Error(`account not found, contractAddress: ${contractAddress}`);
-    }
-
-    const accessToken = new ethers.Contract(
-      contractAddress,
-      CONTRACT_ARTIFACTS.abi,
-      provider
-    );
+    const accessToken = getAccessTokenContract(postId);
     const adminPk = await accessToken.adminEncryptPublicKey();
 
     // encrypt the key and iv to owner;
