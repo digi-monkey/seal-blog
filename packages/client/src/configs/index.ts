@@ -42,7 +42,9 @@ export const getChainNetwork = (chainId: HexNum) => {
   return networks[chainId];
 };
 
-export const CHAIN_NETWORKS = CONFIG.networks as ChainNetworkConfigs;
+export const CHAIN_NETWORKS = filterNetworks(
+  CONFIG.networks as ChainNetworkConfigs
+);
 
 export interface TokenPriceIds {
   [tokenSymbol: string]: string;
@@ -52,4 +54,15 @@ export const TOKEN_IDS = TOKEN_PRICE_IDS as TokenPriceIds;
 
 export function getTokenPriceIdBySymbol(symbol: string) {
   return TOKEN_IDS[symbol];
+}
+
+export function filterNetworks(networks: ChainNetworkConfigs) {
+  const value = Object.keys(networks)
+    .filter((chainId) => !envConfig.omitNetworks.includes(chainId))
+    .reduce((obj, chainId) => {
+      return Object.assign(obj, {
+        [chainId]: networks[chainId],
+      });
+    }, {});
+  return value as ChainNetworkConfigs;
 }
