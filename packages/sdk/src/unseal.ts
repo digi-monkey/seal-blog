@@ -8,6 +8,9 @@ import {
 } from "./regex";
 import { parsePostId } from "./seal";
 import { requestEncryptionPublicKeyFromMetamask } from "./web3";
+import Markdown from "markdown-it";
+
+const md = new Markdown();
 
 declare global {
   interface Window {
@@ -137,7 +140,7 @@ export function replaceEncryptText(decryptText: string) {
       }
       const firstParent = nodes[0].parentNode;
       const newNode = document.createElement("p");
-      newNode.innerText = decryptText;
+      newNode.innerHTML = md.render(decryptText);
       firstParent?.replaceChild(newNode, nodes[0]);
 
       nodes.forEach((n, index) => {
