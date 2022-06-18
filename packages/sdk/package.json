@@ -34,9 +34,11 @@
     "@metamask/eth-sig-util": "^4.0.1",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",
-    "ethereumjs-util": "^7.1.4"
+    "ethereumjs-util": "^7.1.4",
+    "markdown-it": "^13.0.1"
   },
   "devDependencies": {
+    "@types/markdown-it": "^12.2.3",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "buffer": "^6.0.3",
