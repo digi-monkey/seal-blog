@@ -26,6 +26,8 @@ export function Token(props: NftManagerProp) {
   const [totalReaders, setTotalReaders] = useState(0);
   const [tokenPrice, setTokenPrice] = useState(0);
   const [balance, setBalance] = useState(0);
+  const [maxSupply, setMaxSupply] = useState<string>();
+  const [stopMintingCursor, setStopMintingCursor] = useState<string>();
   const [admin, setAdmin] = useState("");
   const [nftUrl, setNftUrl] = useState<string>();
   const [isDeployed, setIsDeployed] = useState(false);
@@ -36,7 +38,7 @@ export function Token(props: NftManagerProp) {
   const chainId = useContext(Context).network.selectChainId;
 
   useEffect(() => {
-    fetchCkbPrice();
+    fetchNativeTokenPrice();
   }, []);
 
   useEffect(() => {
@@ -62,6 +64,8 @@ export function Token(props: NftManagerProp) {
     fetchContractBalance();
     fetchAdminAddress();
     fetchBaseUri();
+    fetchMaxSupply();
+    fetchStopMintingCursor();
   }, [deployedContractAddr]);
 
   const fetchTotalReaders = async () => {
@@ -86,6 +90,16 @@ export function Token(props: NftManagerProp) {
     setAdmin(adminAddr);
   };
 
+  const fetchMaxSupply = async () => {
+    const maxSupply = await contractFactory.methods.maxSupply().call();
+    setMaxSupply(maxSupply);
+  };
+
+  const fetchStopMintingCursor = async () => {
+    const cursor = await contractFactory.methods.stopMintingCursor().call();
+    setStopMintingCursor(cursor);
+  };
+
   const fetchBaseUri = async () => {
     const url = await contractFactory.methods.baseUri().call();
     setNftUrl(url);
@@ -104,7 +118,7 @@ export function Token(props: NftManagerProp) {
     }
   };
 
-  const fetchCkbPrice = async () => {
+  const fetchNativeTokenPrice = async () => {
     if (!chainId) return;
 
     const priceApi = new Price();
@@ -129,12 +143,28 @@ export function Token(props: NftManagerProp) {
       return;
     }
 
+    const maxSupply = await promptInputMaxSupply();
+    if (maxSupply == null) {
+      return;
+    }
+
+    const defaultStopMintingCursor = 0;
     const tokenAdminAddr = account;
     const pk = encryptPk;
+    const params = [
+      tokenPrice,
+      tokenAdminAddr,
+      pk,
+      +maxSupply,
+      defaultStopMintingCursor,
+    ];
+
+    console.log(params);
+
     await contractFactory
       .deploy({
         data: CONTRACT_ARTIFACT.bytecode,
-        arguments: [tokenPrice, tokenAdminAddr, pk],
+        arguments: params,
       })
       .send({
         from: account!,
@@ -174,6 +204,27 @@ export function Token(props: NftManagerProp) {
     });
     console.log(tx);
     await fetchTokenPrice();
+  };
+
+  const changeStopMintingCursor = async (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (deployedContractAddr == null) {
+      return alert("contract address is null, have you deploy yet?");
+    }
+
+    const cursor = await promptInputStopMintingCursor();
+    if (cursor == null) {
+      return;
+    }
+
+    contractFactory.options.address = deployedContractAddr;
+    const tx = await contractFactory.methods.setStopMintingCursor(cursor).send({
+      from: account,
+    });
+    console.log(tx);
+    await fetchStopMintingCursor();
   };
 
   const withdrawBalance = async (e: React.MouseEvent<HTMLElement>) => {
@@ -254,6 +305,40 @@ export function Token(props: NftManagerProp) {
     return tokenPrice;
   };
 
+  const promptInputMaxSupply = async () => {
+    const maxSupply = window.prompt(
+      `Max limit for total NFT tokens(0 means no hard cap limit)`,
+      "0"
+    );
+    if (maxSupply == null) {
+      alert("maxSupply is null");
+      return null;
+    }
+    if (+maxSupply < 0) {
+      alert("maxSupply must be 0 or > 0");
+      return null;
+    }
+
+    return maxSupply;
+  };
+
+  const promptInputStopMintingCursor = async () => {
+    const cursor = window.prompt(
+      `Stop minting at token id (0 means no stop)`,
+      "0"
+    );
+    if (cursor == null) {
+      alert("cursor is null");
+      return null;
+    }
+    if (+cursor < 0) {
+      alert("cursor must be 0 or > 0");
+      return null;
+    }
+
+    return cursor;
+  };
+
   const promptInputWithdrawAmount = () => {
     const amount = window.prompt(
       `Please enter withdraw amount(Max ${balance} ${nativeTokenSymbol})`,
@@ -307,10 +392,15 @@ export function Token(props: NftManagerProp) {
         {isDeployed && (
           <div>
             <Text>
-              Contract Address: <a href="">{deployedContractAddr}</a>
+              Contract Address:{" "}
+              <a
+                href={`/subscribe?chain_id=${chainId}&contract=${deployedContractAddr}`}
+              >
+                {deployedContractAddr}
+              </a>
             </Text>
 
-            <Text>
+            <Text transform="capitalize">
               {"Token Price: " + tokenPrice} {nativeTokenSymbol}(
               {(+nativeTokenPrice! * tokenPrice).toFixed(2)} USD) --
               <a href="" onClick={changeTokenPrice}>
@@ -318,7 +408,7 @@ export function Token(props: NftManagerProp) {
               </a>
             </Text>
 
-            <Text>
+            <Text transform="capitalize">
               {"Balance: " + balance} {nativeTokenSymbol}(
               {(+nativeTokenPrice! * balance).toFixed(2)} USD) --
               <a href="" onClick={withdrawBalance}>
@@ -326,7 +416,7 @@ export function Token(props: NftManagerProp) {
               </a>
             </Text>
 
-            <Text>
+            <Text transform="capitalize">
               {"Admin Address: " + admin}
               --
               <a href="" onClick={transferAdmin}>
@@ -334,9 +424,28 @@ export function Token(props: NftManagerProp) {
               </a>
             </Text>
 
-            <Text>Token Holders: {totalReaders}</Text>
+            <Text transform="capitalize">
+              {"Max Supply Limit: "}
+              {maxSupply === "0" ? "No Hard cap" : maxSupply}
+            </Text>
 
-            <Text>
+            <Text transform="capitalize">
+              {stopMintingCursor != null && stopMintingCursor != "0" && (
+                <span>Stop Minting at Token Id: {stopMintingCursor}</span>
+              )}
+              {stopMintingCursor === "0" && (
+                <span>stopMintingCursor: Not Set</span>
+              )}{" "}
+              ( Mint method will be temporarily disabled after this cursor
+              value(tokenId)) --
+              <a href="" onClick={changeStopMintingCursor}>
+                Change Stop Minting Cursor
+              </a>
+            </Text>
+
+            <Text transform="capitalize">Token Holders: {totalReaders}</Text>
+
+            <Text transform="capitalize">
               {"NFT BaseURI: " + nftUrl}
               --
               <a href="" onClick={setBaseUri}>
@@ -345,7 +454,7 @@ export function Token(props: NftManagerProp) {
             </Text>
             {(!nftUrl || (nftUrl && nftUrl.length === 0)) && (
               <div>
-                <Text>
+                <Text transform="capitalize">
                   BaseURI is not set. You can set token base uri to show
                   different image for your NFT like below
                 </Text>
@@ -364,13 +473,13 @@ export function Token(props: NftManagerProp) {
         <hr />
         {
           <div>
-            <Text>No Contract/Not Your Contract?</Text>
-            <Text variant="large">
+            <Text transform="capitalize">No Contract/Not Your Contract?</Text>
+            <Text transform="capitalize" variant="large">
               <a style={styles.link} onClick={deploy}>
                 Create New One
               </a>
             </Text>
-            <Text>
+            <Text transform="capitalize">
               <a href="/nft/info">learn more</a>
             </Text>
           </div>

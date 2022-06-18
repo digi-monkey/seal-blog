@@ -25,7 +25,9 @@ describe("NaiveFriends721", function () {
     myToken = await token.deploy(
       tokenPrice,
       owner.address,
-      adminEncryptPublicKey
+      adminEncryptPublicKey,
+      0,
+      0
     );
     await myToken.deployed();
   });
@@ -40,7 +42,7 @@ describe("NaiveFriends721", function () {
 
   it("Should return the right name and symbol for the erc721 token", async function () {
     expect(await myToken.name()).to.equal("NaiveFriends721");
-    expect(await myToken.symbol()).to.equal("RAHF");
+    expect(await myToken.symbol()).to.equal("NAF");
   });
 
   it("Should mint two token", async function name() {

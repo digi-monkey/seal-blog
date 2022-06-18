@@ -7,6 +7,8 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 
+require("hardhat-contract-sizer");
+
 dotenv.config();
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -32,6 +34,10 @@ const config: HardhatUserConfig = {
             "*": {
               "*": ["abi", "storageLayout"],
             },
+          },
+          optimizer: {
+            enabled: true,
+            runs: 200,
           },
         },
       },
