@@ -18,14 +18,41 @@ contract NaiveFriends721 is ERC721Enumerable {
     string public baseUri;
     mapping(uint256 => string) public encryptPublicKeys; // tokenId => pk
 
+    uint256 public maxSupply; // token id limit, number must be either 0 or >0. 0 means no limit. can not be changed after constructor
+    uint256 public stopMintingCursor; // token id to stop minting, number must be either 0 or >0. 0 means no stop
+
     constructor(
         uint256 _tokenPrice,
         address _admin,
-        string memory _pk
+        string memory _pk,
+        uint256 _maxSupply,
+        uint256 _stopMintingCursor
     ) ERC721("NaiveFriends721", "NAF") {
+        if (_tokenPrice < 0) {
+            revert InvalidTokenPrice(_tokenPrice);
+        }
+        if (_maxSupply < 0) {
+            revert InvalidMaxSupply(_maxSupply);
+        }
+        if (_stopMintingCursor < 0) {
+            revert InvalidStopMintingCursor(_stopMintingCursor);
+        }
+        if (
+            _stopMintingCursor > 0 &&
+            _maxSupply > 0 &&
+            _stopMintingCursor > _maxSupply
+        ) {
+            revert StopMintingCursorOutOfMaxSupply(
+                _stopMintingCursor,
+                _maxSupply
+            );
+        }
+
         tokenPrice = _tokenPrice;
         admin = _admin;
         adminEncryptPublicKey = _pk;
+        maxSupply = _maxSupply;
+        stopMintingCursor = _stopMintingCursor;
     }
 
     error AdminOnly(address admin, address caller);
@@ -33,17 +60,55 @@ contract NaiveFriends721 is ERC721Enumerable {
     error InsufficientPoolBalance(uint256 balance, uint256 amount);
     error InsufficientOffer(uint256 price, uint256 offer);
     error InvalidTokenPrice(uint256 price);
+    error InvalidMaxSupply(uint256 maxSupply);
+    error InvalidStopMintingCursor(uint256 stopMintingCursor);
+    error StopMintingCursorOutOfMaxSupply(
+        uint256 stopMintingCursor,
+        uint256 maxSupply
+    );
+    error StopMintingCursorOutOfTotalSupply(
+        uint256 stopMintingCursor,
+        uint256 totalSupply
+    );
+    error StopMinting(uint256 stopMintingCursor, uint256 nextTokenId);
+    error MaxSupplyLimit(uint256 maxSupply, uint256 nextTokenId);
 
     function setPrice(uint256 price) public {
         if (msg.sender != admin) {
             revert AdminOnly(admin, msg.sender);
         }
 
-        if (price <= 0) {
+        if (price < 0) {
             revert InvalidTokenPrice(price);
         }
 
         tokenPrice = price;
+    }
+
+    function setStopMintingCursor(uint256 _stopMintingCursor) public {
+        if (msg.sender != admin) {
+            revert AdminOnly(admin, msg.sender);
+        }
+        if (_stopMintingCursor < 0) {
+            revert InvalidStopMintingCursor(_stopMintingCursor);
+        }
+        if (
+            _stopMintingCursor > 0 &&
+            maxSupply > 0 &&
+            _stopMintingCursor > maxSupply
+        ) {
+            revert StopMintingCursorOutOfMaxSupply(
+                _stopMintingCursor,
+                maxSupply
+            );
+        }
+        // setStopMintingCursor should not smaller than all token length already minted
+        uint256 total = totalSupply();
+        if (_stopMintingCursor > 0 && _stopMintingCursor < total) {
+            revert StopMintingCursorOutOfTotalSupply(_stopMintingCursor, total);
+        }
+
+        stopMintingCursor = _stopMintingCursor;
     }
 
     function setAdminEncryptPublickKey(string memory _pk) public {
@@ -86,8 +151,20 @@ contract NaiveFriends721 is ERC721Enumerable {
         }
 
         _tokenIds.increment();
-
         uint256 tokenId = _tokenIds.current();
+
+        // check if stop minting
+        if (stopMintingCursor > 0 && stopMintingCursor < tokenId) {
+            revert StopMinting({
+                stopMintingCursor: stopMintingCursor,
+                nextTokenId: tokenId
+            });
+        }
+        // check if reach max supply
+        if (maxSupply > 0 && maxSupply < tokenId) {
+            revert MaxSupplyLimit({maxSupply: maxSupply, nextTokenId: tokenId});
+        }
+
         _mint(player, tokenId);
 
         // generate random seed for tokenUri
@@ -118,8 +195,20 @@ contract NaiveFriends721 is ERC721Enumerable {
         }
 
         _tokenIds.increment();
-
         uint256 tokenId = _tokenIds.current();
+
+        // check if stop minting
+        if (stopMintingCursor > 0 && stopMintingCursor < tokenId) {
+            revert StopMinting({
+                stopMintingCursor: stopMintingCursor,
+                nextTokenId: tokenId
+            });
+        }
+        // check if reach max supply
+        if (maxSupply > 0 && maxSupply < tokenId) {
+            revert MaxSupplyLimit({maxSupply: maxSupply, nextTokenId: tokenId});
+        }
+
         _mint(player, tokenId);
 
         // generate random seed for tokenUri
