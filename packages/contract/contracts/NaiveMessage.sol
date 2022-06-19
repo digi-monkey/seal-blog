@@ -25,7 +25,7 @@ contract NaiveMessage {
 
     error wrongTokenOwner(address nft, address user, uint256 tokenId);
     error wrongChannel(uint256 channelId);
-    event newMessage(
+    event NewMessage(
         uint256 indexed channelId,
         address indexed toNotifyUser,
         string indexed msg
@@ -40,15 +40,15 @@ contract NaiveMessage {
         address user2,
         uint256 tokenId1,
         uint256 tokenId2
-    ) public {
-        chekOwnerOfToken(channel.nft1, user1, tokenId1);
-        chekOwnerOfToken(channel.nft2, user2, tokenId2);
+    ) public returns (uint256 channelId) {
+        chekOwnerOfToken(nft1, user1, tokenId1);
+        chekOwnerOfToken(nft2, user2, tokenId2);
 
-        Channel channel = Channel(
+        Channel memory channel = Channel(
             nft1,
             nft2,
-            token1,
-            token2,
+            tokenId1,
+            tokenId2,
             false,
             false,
             "",
@@ -65,7 +65,7 @@ contract NaiveMessage {
         uint256 channelId,
         uint256 tokenId, // sender's nft token id
         string memory encryptMsg
-    ) returns () {
+    ) public {
         Channel storage channel = channelById[channelId];
         if (tokenId != channel.token1 && tokenId != channel.token2) {
             revert wrongChannel(channelId);
@@ -78,7 +78,7 @@ contract NaiveMessage {
             channel.msg1 = encryptMsg;
             NaiveFriends721 nf2 = NaiveFriends721(channel.nft2);
             address toNotifyUser = nf2.ownerOf(channel.token2);
-            emit newMessage(channelId, toNotifyUser, encryptMsg);
+            emit NewMessage(channelId, toNotifyUser, encryptMsg);
         }
 
         if (tokenId == channel.token2) {
@@ -88,7 +88,7 @@ contract NaiveMessage {
             channel.msg2 = encryptMsg;
             NaiveFriends721 nf1 = NaiveFriends721(channel.nft1);
             address toNotifyUser = nf1.ownerOf(channel.token1);
-            emit newMessage(channelId, toNotifyUser, encryptMsg);
+            emit NewMessage(channelId, toNotifyUser, encryptMsg);
         }
     }
 
@@ -97,7 +97,7 @@ contract NaiveMessage {
     function readMsg(
         uint256 channelId,
         uint256 tokenId // reader's nft token id
-    ) public view {
+    ) public view returns (string memory encryptText) {
         Channel memory channel = channelById[channelId];
         if (tokenId != channel.token1 && tokenId != channel.token2) {
             revert wrongChannel(channelId);
@@ -115,7 +115,7 @@ contract NaiveMessage {
         address nft,
         address _owner,
         uint256 tokenId
-    ) public {
+    ) public view {
         NaiveFriends721 nf = NaiveFriends721(nft);
         address owner = nf.ownerOf(tokenId);
         require(_owner == owner, "worng token owner");
