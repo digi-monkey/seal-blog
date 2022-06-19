@@ -18,7 +18,11 @@
     "web": "yarn workspace @seal-blog/server ts-node-dev src/view.ts",
     "artifact:server": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/server/src/configs/blockchain/contract-artifact.json",
     "artifact:client": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/client/src/configs/blockchain/contract-artifact.json",
-    "artifact": "yarn artifact:server && yarn artifact:client"
+    "artifact:main": "yarn artifact:server && yarn artifact:client",
+    "artifact:msg:server": "cp packages/contract/artifacts/contracts/NaiveMessage.sol/NaiveMessage.json packages/server/src/configs/blockchain/msg-contract-artifact.json",
+    "artifact:msg:client": "cp packages/contract/artifacts/contracts/NaiveMessage.sol/NaiveMessage.json packages/client/src/configs/blockchain/msg-contract-artifact.json",
+    "artifact:msg": "yarn artifact:msg:server && yarn artifact:msg:client",
+    "artifact": "yarn artifact:main && yarn artifact:msg"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",

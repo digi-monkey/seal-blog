@@ -10,6 +10,7 @@ import { Post } from "./components/dashboard/Post";
 import { HexNum } from "@seal-blog/sdk";
 import { AppContext, Context } from "./hooks/useContext";
 import { LocalStore } from "./localStore";
+import { Messager } from "./components/dashboard/Messager";
 
 export default function MyRouter() {
   const storeChainId = LocalStore.selectChainId();
@@ -26,6 +27,9 @@ export default function MyRouter() {
     <BrowserRouter>
       <Context.Provider value={appContext}>
         <Switch>
+          <Route path="/msg">
+            <Messager />
+          </Route>
           <Route path="/user">
             <User />
           </Route>
