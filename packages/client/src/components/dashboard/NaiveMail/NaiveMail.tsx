@@ -98,7 +98,7 @@ export function NaiveMail() {
     if (chainId == null || account == null || fromInfo == null) return;
 
     const logs = await querySentMailMsgFromLogs(fromInfo.owner!);
-    const mySentMailJsx = await createMailMsgItemListFromLogs(
+    const mySentMailJsx = createMailMsgItemListFromLogs(
       logs,
       chainId,
       account,
@@ -111,7 +111,7 @@ export function NaiveMail() {
     if (chainId == null || account == null || fromInfo == null) return;
 
     const logs = await queryReceiveMailMsgFromLogs(fromInfo.owner);
-    const myReceiveMailList = await createMailMsgItemListFromLogs(
+    const myReceiveMailList = createMailMsgItemListFromLogs(
       logs,
       chainId,
       account,
@@ -140,7 +140,9 @@ export function NaiveMail() {
       .subscribeMail(account, encryptPk, res.handler)
       .send({ from: account, value: price });
     console.log(tx);
-    return alert(`tx ${tx.hash} sent, please wait for confirm in Metamask`);
+    return alert(
+      `tx ${tx.transactionHash} sent, please wait for confirm in Metamask`
+    );
   };
 
   const sendMessage = async () => {
@@ -163,7 +165,9 @@ export function NaiveMail() {
       )
       .send({ from: account });
     console.log(tx);
-    return alert(`tx ${tx.hash} sent, please wait for confirm in Metamask`);
+    return alert(
+      `tx ${tx.transactionHash} sent, please wait for confirm in Metamask`
+    );
   };
 
   const checkInputToMailAddress = async () => {
@@ -382,81 +386,80 @@ export interface MsgItemListProp {
   id: number;
 }
 
-export function MsgItemList(props: MsgItemListProp){
-  const {chainId, log, enableIsReadBadge, id, decryptAccount} = props;
+export function MsgItemList(props: MsgItemListProp) {
+  const { chainId, log, enableIsReadBadge, id, decryptAccount } = props;
 
   const [fullAddr, setFullAddr] = useState<string>();
   const [msgTime, setMsgTime] = useState<string>();
-  const [isRead, setIsRead] = useState<boolean>(isMailMsgRead(chainId, log.transactionHash));
+  const [isRead, setIsRead] = useState<boolean>(
+    isMailMsgRead(chainId, log.transactionHash)
+  );
 
   const fetchFullAddr = async () => {
     const data = await getCounterPartyMailAddress(
       log.returnValues.channelId,
       log.returnValues.toNotifyUser
     );
-    if(data != null){
+    if (data != null) {
       setFullAddr(data);
     }
-  }
+  };
 
   const fetchTimeStamp = async () => {
     const timeStamp = +(await web3.eth.getBlock(log.blockNumber)).timestamp;
-    const d = new Date(timeStamp * 1000).toLocaleString()
+    const d = new Date(timeStamp * 1000).toLocaleString();
     setMsgTime(d);
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchFullAddr();
     fetchTimeStamp();
-  }, [log])
+  }, [log]);
 
-    const normalReadBtn = (
-      <button
-        className="block inline"
-        onClick={async () => {
-          const encryptMsg = log.returnValues.msg;
-          const msg = await decryptEncryptTextWithAccount(
-            encryptMsg,
-            decryptAccount
-          );
-          alert(msg);
-          setMailMsgRead(chainId, log.transactionHash);
-          setIsRead(true);
-        }}
-      >
-        Read
-      </button>
-    );
-    const readBtnWithBadge = (
-      <Badge badgeContent={1} color="error">
-        {normalReadBtn}
-      </Badge>
-    );
-    const enableBadgeReadBtn = isRead ? normalReadBtn : readBtnWithBadge;
-    const readBtn = enableIsReadBadge ? enableBadgeReadBtn : normalReadBtn;
+  const normalReadBtn = (
+    <button
+      className="block inline"
+      onClick={async () => {
+        const encryptMsg = log.returnValues.msg;
+        const msg = await decryptEncryptTextWithAccount(
+          encryptMsg,
+          decryptAccount
+        );
+        alert(msg);
+        setMailMsgRead(chainId, log.transactionHash);
+        setIsRead(true);
+      }}
+    >
+      Read
+    </button>
+  );
+  const readBtnWithBadge = (
+    <Badge badgeContent={1} color="error">
+      {normalReadBtn}
+    </Badge>
+  );
+  const enableBadgeReadBtn = isRead ? normalReadBtn : readBtnWithBadge;
+  const readBtn = enableIsReadBadge ? enableBadgeReadBtn : normalReadBtn;
 
-    return (
-      <li style={{ fontSize: "18px" }} className="block fixed" key={id}>
-        <Grid container>
-          <Grid item xs={3}>
-            <span className="block round inline">{fullAddr}</span>
-          </Grid>
-          <Grid item xs={4}>
-            <span style={{ color: "gray" }}>
-              {" "}
-              {msgTime}
-            </span>
-          </Grid>
-          <Grid item xs={1}></Grid>
-          <Grid item xs={3}>
-            {(log.returnValues.msg.length - 2) / 2} bytes
-          </Grid>
-          <Grid item xs={1}>
-            {readBtn}
-          </Grid>
+  return (
+    <li style={{ fontSize: "18px" }} className="block fixed" key={id}>
+      <Grid container>
+        <Grid item xs={3}>
+          <span className="block round inline">{fullAddr}</span>
         </Grid>
-      </li>
-    )
+        <Grid item xs={4}>
+          <span style={{ color: "gray" }}> {msgTime}</span>
+        </Grid>
+        <Grid item xs={1}></Grid>
+        <Grid item xs={3}>
+          {(log.returnValues.msg.length - 2) / 2} bytes
+        </Grid>
+        <Grid item xs={1}>
+          {readBtn}
+        </Grid>
+      </Grid>
+    </li>
+  );
 }
 
 // types
@@ -671,69 +674,22 @@ async function queryReceiveMailMsgFromLogs(toNotifyAccount: HexStr) {
   return events.reverse();
 }
 
-async function createMailMsgItemListFromLogs(
+function createMailMsgItemListFromLogs(
   logs: DecEventData[],
   chainId: HexStr,
   decryptAccount: HexStr,
   enableIsReadBadge: boolean = true
-){
-  const p = logs.map(async (e, id) => {
-    const isRead = isMailMsgRead(chainId!, e.transactionHash);
-    const fullAddr = await getCounterPartyMailAddress(
-      e.returnValues.channelId,
-      e.returnValues.toNotifyUser
-    );
-    const timeStamp = +(await web3.eth.getBlock(e.blockNumber)).timestamp;
-
-    const normalReadBtn = (
-      <button
-        className="block inline"
-        onClick={async () => {
-          const encryptMsg = e.returnValues.msg;
-          const msg = await decryptEncryptTextWithAccount(
-            encryptMsg,
-            decryptAccount
-          );
-          alert(msg);
-          setMailMsgRead(chainId!, e.transactionHash);
-        }}
-      >
-        Read
-      </button>
-    );
-    const readBtnWithBadge = (
-      <Badge badgeContent={1} color="error">
-        {normalReadBtn}
-      </Badge>
-    );
-    const enableBadgeReadBtn = isRead ? normalReadBtn : readBtnWithBadge;
-    const readBtn = enableIsReadBadge ? enableBadgeReadBtn : normalReadBtn;
-
-    return (
-      <li style={{ fontSize: "18px" }} className="block fixed" key={id}>
-        <Grid container>
-          <Grid item xs={3}>
-            <span className="block round inline">{fullAddr}</span>
-          </Grid>
-          <Grid item xs={4}>
-            <span style={{ color: "gray" }}>
-              {" "}
-              {new Date(timeStamp * 1000).toLocaleString()}
-            </span>
-          </Grid>
-          <Grid item xs={1}></Grid>
-          <Grid item xs={3}>
-            {(e.returnValues.msg.length - 2) / 2} bytes
-          </Grid>
-          <Grid item xs={1}>
-            {readBtn}
-          </Grid>
-        </Grid>
-      </li>
-    );
-  });
-  return await Promise.all(p);
-};
+) {
+  return logs.map((log, id) => (
+    <MsgItemList
+      chainId={chainId}
+      enableIsReadBadge={enableIsReadBadge}
+      decryptAccount={decryptAccount}
+      log={log}
+      id={id}
+    />
+  ));
+}
 
 function getIsReadStoreKey(chainId: HexStr, txHash: HexStr) {
   const key = "isRead/" + chainId + "/" + txHash;

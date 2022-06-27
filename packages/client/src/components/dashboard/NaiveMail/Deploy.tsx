@@ -143,9 +143,7 @@ export function DeployContracts() {
   return (
     <div style={styles.root}>
       <PopupSelectChainId />
-      <Account
-        accountCallback={setAccount}
-      />
+      <Account accountCallback={setAccount} />
       <hr />
       <span className="block fixed">
         <Network></Network>
