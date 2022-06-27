@@ -19,10 +19,16 @@
     "artifact:server": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/server/src/configs/blockchain/contract-artifact.json",
     "artifact:client": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/client/src/configs/blockchain/contract-artifact.json",
     "artifact:main": "yarn artifact:server && yarn artifact:client",
-    "artifact:msg:server": "cp packages/contract/artifacts/contracts/NaiveMessage.sol/NaiveMessage.json packages/server/src/configs/blockchain/msg-contract-artifact.json",
-    "artifact:msg:client": "cp packages/contract/artifacts/contracts/NaiveMessage.sol/NaiveMessage.json packages/client/src/configs/blockchain/msg-contract-artifact.json",
+    "artifact:msg:server": "cp packages/contract/artifacts/contracts/NaiveChannel.sol/NaiveChannel.json packages/server/src/configs/blockchain/msg-contract-artifact.json",
+    "artifact:msg:client": "cp packages/contract/artifacts/contracts/NaiveChannel.sol/NaiveChannel.json packages/client/src/configs/blockchain/msg-contract-artifact.json",
     "artifact:msg": "yarn artifact:msg:server && yarn artifact:msg:client",
-    "artifact": "yarn artifact:main && yarn artifact:msg"
+    "artifact:mail:server": "cp packages/contract/artifacts/contracts/NaiveMail.sol/NaiveMail.json packages/server/src/configs/blockchain/mail-contract-artifact.json",
+    "artifact:mail:client": "cp packages/contract/artifacts/contracts/NaiveMail.sol/NaiveMail.json packages/client/src/configs/blockchain/mail-contract-artifact.json",
+    "artifact:mail": "yarn artifact:mail:server && yarn artifact:mail:client",
+    "artifact:mailRoot:server": "cp packages/contract/artifacts/contracts/NaiveRootServer.sol/NaiveRootServer.json packages/server/src/configs/blockchain/mail-root-contract-artifact.json",
+    "artifact:mailRoot:client": "cp packages/contract/artifacts/contracts/NaiveRootServer.sol/NaiveRootServer.json packages/client/src/configs/blockchain/mail-root-contract-artifact.json",
+    "artifact:mailRoot": "yarn artifact:mailRoot:server && yarn artifact:mailRoot:client",
+    "artifact": "yarn artifact:main && yarn artifact:msg && yarn artifact:mail && yarn artifact:mailRoot"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",

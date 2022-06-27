@@ -93,6 +93,17 @@ export async function decryptAESKey(envelop: string, account: string) {
   return decryptedMessage;
 }
 
+export async function decryptEncryptTextWithAccount(
+  encryptText: string,
+  account: string
+) {
+  const decryptedMessage = await window.ethereum.request({
+    method: "eth_decrypt",
+    params: [encryptText, account],
+  });
+  return decryptedMessage;
+}
+
 export function unSerializeAesKeyAndIv(serializeKeyAndIv: string) {
   const aesKey = serializeKeyAndIv.slice(0, 32);
   const iv = serializeKeyAndIv.slice(32);

@@ -3,7 +3,6 @@ import { Card } from "@material-ui/core";
 import { Text } from "degen";
 import { contractFactory, CONTRACT_ARTIFACT, web3 } from "../../api/web3";
 import web3Utils from "web3-utils";
-import { styles } from "../style/styles";
 import { Api } from "@seal-blog/sdk";
 import {
   API_SERVER_URL,
@@ -475,9 +474,9 @@ export function Token(props: NftManagerProp) {
           <div>
             <Text transform="capitalize">No Contract/Not Your Contract?</Text>
             <Text transform="capitalize" variant="large">
-              <a style={styles.link} onClick={deploy}>
+              <button className="block" onClick={deploy}>
                 Create New One
-              </a>
+              </button>
             </Text>
             <Text transform="capitalize">
               <a href="/nft/info">learn more</a>

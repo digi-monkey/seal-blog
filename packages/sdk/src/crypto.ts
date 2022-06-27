@@ -83,3 +83,20 @@ export async function encryptAesKeyAndIv(
   );
   return encryptedMessage;
 }
+
+export function encryptTextToPk(encryptionPublicKey: string, text: Utf8Str) {
+  console.info(`pk: ${encryptionPublicKey}, text: ${text}`);
+  const encryptedMessage: HexStr = ethUtil.bufferToHex(
+    Buffer.from(
+      JSON.stringify(
+        sigUtil.encrypt({
+          publicKey: encryptionPublicKey,
+          data: text, // 16 bytes + 8 bytes
+          version: "x25519-xsalsa20-poly1305",
+        })
+      ),
+      "utf8"
+    )
+  );
+  return encryptedMessage;
+}

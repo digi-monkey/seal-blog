@@ -18,17 +18,29 @@ struct Channel {
     string msg2;
 }
 
-contract NaiveMessage {
+contract NaiveChannel {
     mapping(uint256 => Channel) public channelById;
     using Counters for Counters.Counter;
     Counters.Counter private _channelIds;
 
     error wrongTokenOwner(address nft, address user, uint256 tokenId);
     error wrongChannel(uint256 channelId);
+    error wrongSideChannel(uint256 channelId);
+
+    event CreateChannel(
+        uint256 indexed channelId,
+        address indexed user1,
+        address indexed user2
+    );
     event NewMessage(
         uint256 indexed channelId,
         address indexed toNotifyUser,
-        string indexed msg
+        string msg
+    );
+    event SentMessage(
+        uint256 indexed channelId,
+        address indexed sentFromUser,
+        string msg
     );
 
     constructor() {}
@@ -41,8 +53,8 @@ contract NaiveMessage {
         uint256 tokenId1,
         uint256 tokenId2
     ) public returns (uint256 channelId) {
-        chekOwnerOfToken(nft1, user1, tokenId1);
-        chekOwnerOfToken(nft2, user2, tokenId2);
+        checkOwnerOfToken(nft1, user1, tokenId1);
+        checkOwnerOfToken(nft2, user2, tokenId2);
 
         Channel memory channel = Channel(
             nft1,
@@ -58,38 +70,51 @@ contract NaiveMessage {
         uint256 id = _channelIds.current();
         channelById[id] = channel;
 
+        emit CreateChannel(id, user1, user2);
         return id;
     }
 
     function sendMsg(
         uint256 channelId,
+        address nft,
         uint256 tokenId, // sender's nft token id
-        string memory encryptMsg
+        string memory encryptToMsg, // msg encrypted to receiver
+        string memory encryptFromMsg // msg encrypted to sender
     ) public {
         Channel storage channel = channelById[channelId];
         if (tokenId != channel.token1 && tokenId != channel.token2) {
             revert wrongChannel(channelId);
         }
+        if (nft != channel.nft1 && nft != channel.nft2) {
+            revert wrongChannel(channelId);
+        }
 
-        if (tokenId == channel.token1) {
-            chekOwnerOfToken(channel.nft1, msg.sender, tokenId);
+        if (nft == channel.nft1 && tokenId == channel.token1) {
+            checkOwnerOfToken(channel.nft1, address(msg.sender), tokenId);
 
             // overwirte new message;
-            channel.msg1 = encryptMsg;
+            channel.msg1 = encryptToMsg;
             NaiveFriends721 nf2 = NaiveFriends721(channel.nft2);
             address toNotifyUser = nf2.ownerOf(channel.token2);
-            emit NewMessage(channelId, toNotifyUser, encryptMsg);
+            emit NewMessage(channelId, toNotifyUser, encryptToMsg);
+            emit SentMessage(channelId, msg.sender, encryptFromMsg);
+            return;
         }
 
-        if (tokenId == channel.token2) {
-            chekOwnerOfToken(channel.nft2, msg.sender, tokenId);
+        if (nft == channel.nft2 && tokenId == channel.token2) {
+            checkOwnerOfToken(channel.nft2, address(msg.sender), tokenId);
 
             // overwirte new message;
-            channel.msg2 = encryptMsg;
+            channel.msg2 = encryptToMsg;
             NaiveFriends721 nf1 = NaiveFriends721(channel.nft1);
             address toNotifyUser = nf1.ownerOf(channel.token1);
-            emit NewMessage(channelId, toNotifyUser, encryptMsg);
+            emit NewMessage(channelId, toNotifyUser, encryptToMsg);
+            emit SentMessage(channelId, msg.sender, encryptFromMsg);
+            return;
         }
+
+        // wrong side
+        revert wrongSideChannel(channelId);
     }
 
     // read newest one msg, history msg can be read from event log
@@ -111,7 +136,7 @@ contract NaiveMessage {
         }
     }
 
-    function chekOwnerOfToken(
+    function checkOwnerOfToken(
         address nft,
         address _owner,
         uint256 tokenId

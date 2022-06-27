@@ -145,7 +145,7 @@ contract NaiveFriends721 is ERC721Enumerable {
         return baseUri;
     }
 
-    function mint(address player) external payable returns (uint256) {
+    function mint(address player) public payable returns (uint256) {
         if (msg.value < tokenPrice) {
             revert InsufficientOffer({price: tokenPrice, offer: msg.value});
         }
@@ -189,7 +189,7 @@ contract NaiveFriends721 is ERC721Enumerable {
     }
 
     // subscribe = mint + setEncryptPk in one step
-    function subscribe(address player, string memory key) external payable {
+    function subscribe(address player, string memory key) public payable {
         if (msg.value < tokenPrice) {
             revert InsufficientOffer({price: tokenPrice, offer: msg.value});
         }
