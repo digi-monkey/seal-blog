@@ -11,9 +11,8 @@
     },
 
     "0x4": {
-      "NaiveMail": null,
-      "NaiveChannel": null,
-      "NaiveRootServer": null 
+      "NaiveChannel": "0xf3d637642349080c4b33Fd4E7d1A7F1638B3B65A",
+      "NaiveRootServer": "0x603162D4184954B229f65ed24273787F3D64e0E5" 
     },
 
     "0x38": {
