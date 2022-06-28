@@ -19,7 +19,7 @@ import {
 } from "@seal-blog/sdk";
 import { ethers } from "ethers";
 import { LocalStore } from "../../localStore";
-import { predefineContractAddresses } from "../../configs";
+import { predefineContractAddresses, CHAIN_NETWORKS } from "../../configs";
 
 const styles = {
   root: {
@@ -264,7 +264,14 @@ export function NaiveMail() {
 
   const mailServerList = mailServers.map((m, index) => (
     <li className="block inline" key={index}>
-      <a href={"/mail-server/" + m.address}>@{m.name}</a>
+      <a
+        target={"_blank"}
+        href={
+          CHAIN_NETWORKS[chainId!].blockExplorerUrl + "/account/" + m.address
+        }
+      >
+        @{m.name}
+      </a>
     </li>
   ));
   const myObtainMailAddressList = myObtainMailAddresses.map((addr, id) => (
@@ -287,13 +294,17 @@ export function NaiveMail() {
         <hr />
         <Grid container spacing={4} style={{ fontSize: "16px" }}>
           <Grid item xs={4}>
-            All Servers {mailServerList} |{" "}
+            {mailServerList}
+          </Grid>
+          <Grid item xs={8}>
+            Your Mail addresses:{" "}
+            {myObtainMailAddressList.length > 0
+              ? myObtainMailAddressList
+              : "None"}{" "}
+            |{" "}
             <button className="block inline" onClick={registerMailAddress}>
               Register
             </button>
-          </Grid>
-          <Grid item xs={8}>
-            Your Mails {myObtainMailAddressList}
           </Grid>
         </Grid>
       </Card>
@@ -302,9 +313,13 @@ export function NaiveMail() {
           <Grid item xs={4} style={{ backgroundColor: "darkgray" }}>
             From
             <span className="block fixed inline" style={{ fontSize: "20px" }}>
-              {myObtainMailAddresses.length > 0
-                ? myObtainMailAddresses[0]
-                : "No mail yet"}
+              {myObtainMailAddresses.length > 0 ? (
+                myObtainMailAddresses[0]
+              ) : (
+                <Text transform="capitalize">
+                  {"no mail yet, please register one"}
+                </Text>
+              )}
             </span>{" "}
             <hr />
             <form style={{ marginBottom: "40px" }}>
@@ -313,7 +328,14 @@ export function NaiveMail() {
                 onChange={(event) => setInputToMailAddress(event.target.value)}
                 value={inputToMailAddress}
                 onMouseLeave={checkInputToMailAddress}
-                style={{ fontSize: "20px", padding: "5px" }}
+                style={{
+                  fontSize: "20px",
+                  padding: "5px",
+                  borderColor:
+                    isChannelNotCreatedYet || illegalToMailInput
+                      ? "red"
+                      : "black",
+                }}
                 className="block wrap inline"
                 type="text"
               />
