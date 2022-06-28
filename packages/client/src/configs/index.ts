@@ -1,7 +1,8 @@
 import { envConfig } from "./env-config";
 import config from "./constant.json";
-import { HexNum } from "@seal-blog/sdk";
+import { HexNum, HexStr } from "@seal-blog/sdk";
 import CONFIG from "./blockchain/networks.json";
+import ADDRESSES from "./blockchain/addresses.json";
 import TOKEN_PRICE_IDS from "./blockchain/coingecko.json";
 
 export const API_SERVER_URL =
@@ -66,3 +67,15 @@ export function filterNetworks(networks: ChainNetworkConfigs) {
     }, {});
   return value as ChainNetworkConfigs;
 }
+
+export interface PredefineContractAddresses {
+  [chainId: HexStr]: PredefineContracts;
+}
+
+export interface PredefineContracts {
+  NaiveChannel: HexStr | null;
+  NaiveRootServer: HexStr | null;
+}
+
+export const predefineContractAddresses =
+  ADDRESSES.predefineContracts as PredefineContractAddresses;

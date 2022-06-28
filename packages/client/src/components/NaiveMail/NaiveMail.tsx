@@ -19,6 +19,7 @@ import {
 } from "@seal-blog/sdk";
 import { ethers } from "ethers";
 import { LocalStore } from "../../localStore";
+import { predefineContractAddresses } from "../../configs";
 
 const styles = {
   root: {
@@ -28,10 +29,6 @@ const styles = {
     padding: "20px",
   },
 };
-
-const channelAddr = "0x7DA79EccF920e7Bb895759f36158656723eaBBe9";
-const mailServerAddr = "0xbd1183c2fb7a70bdb0348208cd6f0e6c226d3f19";
-const rootServerAddr = "0x63D14F63C9Cac557225633D45899584edcB9639f";
 
 export function NaiveMail() {
   const chainId = useContext(Context).network.selectChainId;
@@ -62,8 +59,9 @@ export function NaiveMail() {
     useState<boolean>(false);
 
   const fetchAllMailServers = async () => {
+    const addr = getContractAddress(chainId!, "rootServer");
     const events = await getContractEventLogs(
-      rootServerAddr,
+      addr,
       ROOT_SERVER_ARTIFACT.abi,
       "RegisterServerName"
     );
@@ -80,14 +78,21 @@ export function NaiveMail() {
   const fetchMyObtainMailAddresses = async () => {
     if (account == null) return;
 
-    const data = await findUserObtainMailAddresses(account, mailServers);
+    const data = await findUserObtainMailAddresses(
+      chainId!,
+      account,
+      mailServers
+    );
     setMyObtainMailAddresses(data);
   };
 
   const fetchFromInfo = async () => {
     if (myObtainMailAddresses.length === 0) return;
 
-    const myInfo = await getUserInfoByMailAddress(myObtainMailAddresses[0]);
+    const myInfo = await getUserInfoByMailAddress(
+      chainId!,
+      myObtainMailAddresses[0]
+    );
     if (myInfo == null) {
       return setToMailAddressInputErr("from mail not exits.");
     }
@@ -97,7 +102,7 @@ export function NaiveMail() {
   const fetchMySentMailMsgList = async () => {
     if (chainId == null || account == null || fromInfo == null) return;
 
-    const logs = await querySentMailMsgFromLogs(fromInfo.owner!);
+    const logs = await querySentMailMsgFromLogs(chainId!, fromInfo.owner!);
     const mySentMailJsx = createMailMsgItemListFromLogs(
       logs,
       chainId,
@@ -110,7 +115,7 @@ export function NaiveMail() {
   const fetchMyReceiveMailMsgList = async () => {
     if (chainId == null || account == null || fromInfo == null) return;
 
-    const logs = await queryReceiveMailMsgFromLogs(fromInfo.owner);
+    const logs = await queryReceiveMailMsgFromLogs(chainId!, fromInfo.owner);
     const myReceiveMailList = createMailMsgItemListFromLogs(
       logs,
       chainId,
@@ -134,7 +139,11 @@ export function NaiveMail() {
       return alert("no match mail server @" + res.handler);
     }
     const matchServer = matchServers[0];
-    const contract = getContractInstance("mailServer", matchServer.address);
+    const contract = getContractInstance(
+      chainId!,
+      "mailServer",
+      matchServer.address
+    );
     const price = await contract.methods.tokenPrice().call();
     const tx = await contract.methods
       .subscribeMail(account, encryptPk, res.handler)
@@ -150,7 +159,7 @@ export function NaiveMail() {
       return alert("msg is null");
     }
 
-    const channelContract = getContractInstance("channel", channelAddr);
+    const channelContract = getContractInstance(chainId!, "channel");
 
     const encryptToText = encryptTextToPk(toInfo?.pk!, writeMsg);
     const encryptFromText = encryptTextToPk(fromInfo?.pk!, writeMsg);
@@ -172,7 +181,10 @@ export function NaiveMail() {
 
   const checkInputToMailAddress = async () => {
     if (inputToMailAddress) {
-      const toMailResult = await getUserInfoByMailAddress(inputToMailAddress);
+      const toMailResult = await getUserInfoByMailAddress(
+        chainId!,
+        inputToMailAddress
+      );
 
       if (toMailResult == null) {
         setIllegalToMailInput(true);
@@ -184,6 +196,7 @@ export function NaiveMail() {
 
       setToInfo(toMailResult);
       const channelId = await filterChannelFromUser(
+        chainId!,
         account!,
         toMailResult.owner
       );
@@ -220,7 +233,7 @@ export function NaiveMail() {
     token1: string,
     token2: string
   ) => {
-    const channelContract = getContractInstance("channel", channelAddr);
+    const channelContract = getContractInstance(chainId!, "channel");
     const tx = await channelContract.methods
       .createChannel(nft1, nft2, user1, user2, token1, token2)
       .send({ from: user1 });
@@ -229,8 +242,10 @@ export function NaiveMail() {
   };
 
   useEffect(() => {
+    if (chainId == null) return;
+
     fetchAllMailServers();
-  }, []);
+  }, [chainId]);
 
   useEffect(() => {
     if (account != null && mailServers.length > 0) {
@@ -393,6 +408,7 @@ export function MsgItemList(props: MsgItemListProp) {
 
   const fetchFullAddr = async () => {
     const data = await getCounterPartyMailAddress(
+      chainId,
       log.returnValues.channelId,
       log.returnValues.toNotifyUser
     );
@@ -480,18 +496,21 @@ export type MailAddressStr = Utf8Str;
 
 // helper functions
 function getContractInstance(
+  chainId: HexStr,
   contractType: "channel" | "rootServer" | "mailServer",
   _address?: HexStr
 ) {
   switch (contractType) {
     case "channel": {
-      const address = _address || channelAddr;
+      const address =
+        _address || predefineContractAddresses[chainId].NaiveChannel;
       if (address == null) throw new Error("address must be provided!");
       return new web3.eth.Contract(CHANEL_ARTIFACT.abi as AbiItem[], address);
     }
 
     case "rootServer": {
-      const address = _address || rootServerAddr;
+      const address =
+        _address || predefineContractAddresses[chainId].NaiveRootServer;
       if (address == null) throw new Error("address must be provided!");
       return new web3.eth.Contract(
         ROOT_SERVER_ARTIFACT.abi as AbiItem[],
@@ -500,7 +519,7 @@ function getContractInstance(
     }
 
     case "mailServer": {
-      const address = _address || mailServerAddr;
+      const address = _address;
       if (address == null) throw new Error("address must be provided!");
       return new web3.eth.Contract(
         MAIL_SERVER_ARTIFACT.abi as AbiItem[],
@@ -513,11 +532,33 @@ function getContractInstance(
   }
 }
 
-async function getFullEmailAddressFromNFT(nftAddr: string, tokenId: string) {
+function getContractAddress(
+  chainId: HexStr,
+  contractType: "channel" | "rootServer"
+): string {
+  switch (contractType) {
+    case "channel": {
+      return predefineContractAddresses[chainId].NaiveChannel!;
+    }
+
+    case "rootServer": {
+      return predefineContractAddresses[chainId].NaiveRootServer!;
+    }
+
+    default:
+      throw new Error("no contract type supported!");
+  }
+}
+
+async function getFullEmailAddressFromNFT(
+  chainId: HexStr,
+  nftAddr: string,
+  tokenId: string
+) {
   const eventName = "RegisterServerName";
   const topics: Topic[] = [null, nftAddr];
   const events = await getContractEventLogs(
-    rootServerAddr,
+    getContractAddress(chainId, "rootServer"),
     ROOT_SERVER_ARTIFACT.abi,
     eventName,
     topics
@@ -549,22 +590,24 @@ async function getFullEmailAddressFromNFT(nftAddr: string, tokenId: string) {
 }
 
 async function getCounterPartyMailAddress(
+  chainId: HexStr,
   channelId: string,
   excludeAccount: HexStr
 ) {
-  const contract = getContractInstance("channel", channelAddr);
+  const contract = getContractInstance(chainId, "channel");
   const channel = await contract.methods.channelById(channelId).call();
-  const mailContract = getContractInstance("mailServer", channel.nft1);
+  const mailContract = getContractInstance(chainId, "mailServer", channel.nft1);
   const address = await mailContract.methods.ownerOf(channel.token1).call();
   // todo: what if both are the same user?
   if (address != excludeAccount) {
-    return getFullEmailAddressFromNFT(channel.nft1, channel.token1);
+    return getFullEmailAddressFromNFT(chainId, channel.nft1, channel.token1);
   } else {
-    return getFullEmailAddressFromNFT(channel.nft2, channel.token2);
+    return getFullEmailAddressFromNFT(chainId, channel.nft2, channel.token2);
   }
 }
 
 async function findUserObtainMailAddresses(
+  chainId: HexStr,
   account: string,
   mailServers: MailServer[]
 ) {
@@ -574,7 +617,7 @@ async function findUserObtainMailAddresses(
     serverName: string;
   }[] = [];
   for (const m of mailServers) {
-    const contract = getContractInstance("mailServer", m.address);
+    const contract = getContractInstance(chainId, "mailServer", m.address);
     const balance = await contract.methods.balanceOf(account).call();
     for (let i = 0; i < balance; i++) {
       const tokenId = await contract.methods
@@ -604,8 +647,8 @@ async function findUserObtainMailAddresses(
   return mailAddress;
 }
 
-async function getUserInfoByMailAddress(mailAddr: string) {
-  const contract = getContractInstance("rootServer", rootServerAddr);
+async function getUserInfoByMailAddress(chainId: HexStr, mailAddr: string) {
+  const contract = getContractInstance(chainId, "rootServer");
   try {
     const addr = parseMailAddr(mailAddr);
     const result: MailAddressOwnerInfo | null = await contract.methods
@@ -624,13 +667,17 @@ function parseMailAddr(mailAddr: string) {
   return { handler, server };
 }
 
-async function filterChannelFromUser(fromAddr: HexStr, toAddr: HexStr) {
+async function filterChannelFromUser(
+  chainId: HexStr,
+  fromAddr: HexStr,
+  toAddr: HexStr
+) {
   let channelId: string | undefined;
 
   const eventName = "CreateChannel";
   const topics = [null, [fromAddr, toAddr], [fromAddr, toAddr]];
   const events = await getContractEventLogs(
-    channelAddr,
+    getContractAddress(chainId, "channel"),
     CHANEL_ARTIFACT.abi,
     eventName,
     topics
@@ -643,11 +690,11 @@ async function filterChannelFromUser(fromAddr: HexStr, toAddr: HexStr) {
   return channelId;
 }
 
-async function querySentMailMsgFromLogs(fromAccount: HexStr) {
+async function querySentMailMsgFromLogs(chainId: HexStr, fromAccount: HexStr) {
   const eventName = "SentMessage";
   const topics: Topic[] = [null, fromAccount, null];
   const _events = await getContractEventLogs(
-    channelAddr,
+    getContractAddress(chainId, "channel"),
     CHANEL_ARTIFACT.abi,
     eventName,
     topics
@@ -657,11 +704,14 @@ async function querySentMailMsgFromLogs(fromAccount: HexStr) {
   return events;
 }
 
-async function queryReceiveMailMsgFromLogs(toNotifyAccount: HexStr) {
+async function queryReceiveMailMsgFromLogs(
+  chainId: HexStr,
+  toNotifyAccount: HexStr
+) {
   const eventName = "NewMessage";
   const topics: Topic[] = [null, toNotifyAccount, null];
   const events = await getContractEventLogs(
-    channelAddr,
+    getContractAddress(chainId, "channel"),
     CHANEL_ARTIFACT.abi,
     eventName,
     topics
