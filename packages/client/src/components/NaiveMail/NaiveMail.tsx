@@ -1,14 +1,14 @@
 import { Badge, Card, Grid, TextField } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../../../hooks/useContext";
-import { Account } from "../../metamask/account";
-import { Network } from "../../metamask/network";
-import { PopupSelectChainId } from "../../setting/setting";
+import { Context } from "../../hooks/useContext";
+import { Account } from "../metamask/account";
+import { Network } from "../metamask/network";
+import { PopupSelectChainId } from "../setting/setting";
 import { Text } from "degen";
-import { DecEventData, getContractEventLogs, Topic, web3 } from "../../../api";
-import CHANEL_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveChannel.json";
-import MAIL_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveMail.json";
-import ROOT_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveRootServer.json";
+import { DecEventData, getContractEventLogs, Topic, web3 } from "../../api";
+import CHANEL_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveChannel.json";
+import MAIL_SERVER_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveMail.json";
+import ROOT_SERVER_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveRootServer.json";
 import { AbiItem } from "web3-utils";
 import {
   encryptTextToPk,
@@ -18,7 +18,7 @@ import {
   DecimalStr,
 } from "@seal-blog/sdk";
 import { ethers } from "ethers";
-import { LocalStore } from "../../../localStore";
+import { LocalStore } from "../../localStore";
 
 const styles = {
   root: {
@@ -265,20 +265,14 @@ export function NaiveMail() {
         accountCallback={setAccount}
         encryptionPublicKeyCallback={setEncryptPk}
       />
-      <hr />
-      <span className="block fixed">
-        <Network></Network>
-      </span>
-      <hr />
       <Card className="block fixed">
-        <Text transform="capitalize">
-          welcome to NaiveMail, we use ERC721 to enable full-onchain E2E
-          messaging on L2 evm chain.
+        <Text size={"large"} transform="capitalize">
+          welcome to NaiveMail, a full-onchain E2E messaging experiment
         </Text>
         <hr />
         <Grid container spacing={4} style={{ fontSize: "16px" }}>
           <Grid item xs={4}>
-            All Servers {mailServerList}
+            All Servers {mailServerList} |{" "}
             <button className="block inline" onClick={registerMailAddress}>
               Register
             </button>
@@ -354,7 +348,6 @@ export function NaiveMail() {
             >
               Received
             </span>{" "}
-            <hr />
             {myReceiveMailList}
             <hr />
             <span
@@ -363,7 +356,6 @@ export function NaiveMail() {
             >
               Sent
             </span>{" "}
-            <hr />
             {mySentMailList}
             <hr />
           </Grid>
@@ -374,6 +366,10 @@ export function NaiveMail() {
       <br />
       <br />
       <br />
+      <span className="block fixed">
+        <Network></Network>
+      </span>
+      <hr />
     </div>
   );
 }
@@ -445,10 +441,10 @@ export function MsgItemList(props: MsgItemListProp) {
     <li style={{ fontSize: "18px" }} className="block fixed" key={id}>
       <Grid container>
         <Grid item xs={3}>
-          <span className="block round inline">{fullAddr}</span>
+          <span className="block round inline">{fullAddr || "..."}</span>
         </Grid>
         <Grid item xs={4}>
-          <span style={{ color: "gray" }}> {msgTime}</span>
+          <span style={{ color: "gray" }}> {msgTime || "..."}</span>
         </Grid>
         <Grid item xs={1}></Grid>
         <Grid item xs={3}>

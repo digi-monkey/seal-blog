@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
-import { Context } from "../../../hooks/useContext";
+import { Context } from "../../hooks/useContext";
 import { Card } from "@material-ui/core";
 import { Button, Text } from "degen";
-import { Account } from "../../metamask/account";
-import { Network } from "../../metamask/network";
-import { PopupSelectChainId } from "../../setting/setting";
-import { web3 } from "../../../api";
-import CHANEL_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveChannel.json";
-import MAIL_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveMail.json";
-import ROOT_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveRootServer.json";
+import { Account } from "../metamask/account";
+import { Network } from "../metamask/network";
+import { PopupSelectChainId } from "../setting/setting";
+import { web3 } from "../../api";
+import CHANEL_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveChannel.json";
+import MAIL_SERVER_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveMail.json";
+import ROOT_SERVER_ARTIFACT from "../../configs/blockchain/contract-artifact/NaiveRootServer.json";
 import { AbiItem } from "web3-utils";
 
 const styles = {
