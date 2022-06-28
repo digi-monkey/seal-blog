@@ -26,15 +26,15 @@ export function DeployContracts() {
   const [account, setAccount] = useState<string>();
   const [isChannelDeployed, setIsChannelDeployed] = useState(true);
   const [channelAddr, setChannelAddr] = useState<string>(
-    "0x7DA79EccF920e7Bb895759f36158656723eaBBe9"
+    "0x70c98DC221980960e61b180c23495a88F1C161Cd"
   );
   const [isMailTokenDeployed, setIsMailTokenDeployed] = useState(true);
   const [mailServerAddr, setMailServerAddr] = useState<string>(
-    "0xbd1183c2fb7a70bdb0348208cd6f0e6c226d3f19"
+    "0x454917fcc66bb19edac81d174c0a4e7487c5a946"
   );
   const [isRootServerDeployed, setIsRootServerDeployed] = useState(true);
   const [rootServerAddr, setRootServerAddr] = useState<string>(
-    "0x63D14F63C9Cac557225633D45899584edcB9639f"
+    "0x48E1A75306a67F86299A4c0381bc9558C8B6964C"
   );
   if (chainId == null) {
     alert("no chain id!");
