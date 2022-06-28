@@ -1,15 +1,15 @@
-import ContractArtifact from "../configs/blockchain/contract-artifact.json";
+import NaiveFriends721ContractArtifact from "../configs/blockchain/contract-artifact/NaiveFriends721.json";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { Contract, EventData } from "web3-eth-contract";
 import { HexStr } from "@seal-blog/sdk";
 import { ethers } from "ethers";
 
-export const CONTRACT_ARTIFACT = ContractArtifact;
+export const NAIVE_FRIENDS_CONTRACT_ARTIFACT = NaiveFriends721ContractArtifact;
 
 export const web3 = new Web3(Web3.givenProvider);
 export const contractFactory = new web3.eth.Contract(
-  CONTRACT_ARTIFACT.abi as AbiItem[]
+  NAIVE_FRIENDS_CONTRACT_ARTIFACT.abi as AbiItem[]
 );
 
 export const ZERO_ADDRESS = "0x" + "0".repeat(40);

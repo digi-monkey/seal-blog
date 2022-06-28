@@ -17,7 +17,7 @@ import {
   HexStr,
 } from "@seal-blog/sdk";
 import { getAccessTokenContract, getProvider } from "../web3";
-import CONTRACT_ARTIFACTS from "../configs/blockchain/contract-artifact.json";
+import CONTRACT_ARTIFACTS from "../configs/blockchain/contract-artifact/NaiveFriends721.json";
 
 const service_name = `Seal Api Server`;
 

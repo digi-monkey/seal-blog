@@ -6,9 +6,9 @@ import { Network } from "../../metamask/network";
 import { PopupSelectChainId } from "../../setting/setting";
 import { Text } from "degen";
 import { DecEventData, getContractEventLogs, Topic, web3 } from "../../../api";
-import CHANEL_ARTIFACT from "../../../configs/blockchain/msg-contract-artifact.json";
-import MAIL_SERVER_ARTIFACT from "../../../configs/blockchain/mail-contract-artifact.json";
-import ROOT_SERVER_ARTIFACT from "../../../configs/blockchain/mail-root-contract-artifact.json";
+import CHANEL_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveChannel.json";
+import MAIL_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveMail.json";
+import ROOT_SERVER_ARTIFACT from "../../../configs/blockchain/contract-artifact/NaiveRootServer.json";
 import { AbiItem } from "web3-utils";
 import {
   encryptTextToPk,

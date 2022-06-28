@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card } from "@material-ui/core";
 import { Text } from "degen";
-import { contractFactory, CONTRACT_ARTIFACT, web3 } from "../../api/web3";
+import {
+  contractFactory,
+  NAIVE_FRIENDS_CONTRACT_ARTIFACT,
+  web3,
+} from "../../api/web3";
 import web3Utils from "web3-utils";
 import { Api } from "@seal-blog/sdk";
 import {
@@ -162,7 +166,7 @@ export function Token(props: NftManagerProp) {
 
     await contractFactory
       .deploy({
-        data: CONTRACT_ARTIFACT.bytecode,
+        data: NAIVE_FRIENDS_CONTRACT_ARTIFACT.bytecode,
         arguments: params,
       })
       .send({
