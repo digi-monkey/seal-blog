@@ -1,11 +1,18 @@
-seal-blog
+Seal Blog
 ===
 
-one line javascript code to make your blog WEB3.
+https://sealblog.xyz
 
-> Make Blog Cool Again
+One Line Code To WEB3 Your Blog.
 
-turn your personal blog post encrypted and only readable with NFT membership token holder.
+Turn your personal blog post encrypted and only readable with NFT membership token holder.
+
+Naive Mail
+---
+
+A full-onchain E2E messaging experiment, build on seal blog
+
+https://sealblog.xyz/msg
 
 How to run
 ---
