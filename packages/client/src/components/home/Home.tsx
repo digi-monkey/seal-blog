@@ -156,7 +156,7 @@ export function Home() {
               <pre style={styles.pre}>
                 <code>
                   {`
-<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v${sdkVersion}/bundle/unseal.min.js" />
+<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v${sdkVersion}/bundle/unseal.min.js"></script>
 `}
                 </code>
               </pre>
