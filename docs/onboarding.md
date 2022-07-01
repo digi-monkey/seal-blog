@@ -11,7 +11,7 @@ Pre-Requires:
 1. Insert the script tag on your blog post html page.
 
 ```sh
-<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v0.5.0-rc1/bundle/unseal.min.js" />
+<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v0.6.0-rc1/bundle/unseal.min.js" />
 ```
 
 If you can't edit the html source code of your blog, just ignore this step. You can still use Seal, the difference it that the decryption process will redirect your readers from your blog to Seal official home page, if you don't mind.
