@@ -12,7 +12,7 @@ Naive Mail
 
 A full-onchain E2E messaging experiment, build on seal blog
 
-https://sealblog.xyz/msg
+https://sealblog.xyz/mail
 
 How to run
 ---
