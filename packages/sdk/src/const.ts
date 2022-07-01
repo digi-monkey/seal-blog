@@ -1,1 +1,1 @@
-export const OFFICIAL_SEAL_HOME = "https://underplay.xyz";
+export const OFFICIAL_SEAL_HOME = "https://sealblog.xyz";

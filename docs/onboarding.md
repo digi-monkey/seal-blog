@@ -18,7 +18,7 @@ If you can't edit the html source code of your blog, just ignore this step. You 
 
 2. Depoly a NFT represent your blog pay wall membership
 
-Go to [Seal user page](https://underplay.xyz/user), after connect with your Metamask wallet, click `Create New One`.
+Go to [Seal user page](https://sealblog.xyz/user), after connect with your Metamask wallet, click `Create New One`.
 
 ![img](imgs/deploy-nft-1.jpeg)
 
@@ -30,7 +30,7 @@ Click ok and sign the transaction with Metamask and wait for the transaction to 
 
 3. Write the first post
 
-In [Seal user page](https://underplay.xyz/user), click `Write` button.
+In [Seal user page](https://sealblog.xyz/user), click `Write` button.
 
 In the editor page, write your post(support markdown) in the textarea, insert the magic line `---seal---` into where you want the encrypted premium content begins.
 

@@ -4,11 +4,11 @@ import { detectHtmlToAddButton } from "./unseal";
 import { normalizeUrl } from "./helper";
 
 const RPC: string = normalizeUrl(
-  document.currentScript?.getAttribute("rpc") || "https://api.underplay.xyz"
+  document.currentScript?.getAttribute("rpc") || "https://api.sealblog.xyz"
 );
 
 const CLIENT_RPC: string = normalizeUrl(
-  document.currentScript?.getAttribute("client") || "https://underplay.xyz"
+  document.currentScript?.getAttribute("client") || "https://sealblog.xyz"
 );
 
 const MAX_RETRY: number = +(
