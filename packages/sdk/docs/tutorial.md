@@ -7,7 +7,7 @@ we provide two ways to use SealBlog.
 if you owns the code of your blog, simply adding the following line in the html of article page should be enough:
 
 ```js
-<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v0.1.0-rc1/bundle/unseal.min.js" rpc="https://api.underplay.xyz/" client="https://underplay.xyz"/>
+<script src="https://cdn.jsdelivr.net/npm/@seal-blog/sdk@v0.1.0-rc1/bundle/unseal.min.js" rpc="https://api.sealblog.xyz/" client="https://sealblog.xyz"/>
 ```
 
 this way the decryption will happen all in your domain.

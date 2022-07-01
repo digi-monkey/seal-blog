@@ -3,11 +3,11 @@
     "github_official": "https://github.com/digi-monkey/seal-blog",
     "twitter_official": "https://twitter.com/digi_monkey",
     "server_url": {
-        "production": "https://api.underplay.xyz",
+        "production": "https://api.sealblog.xyz",
         "development": "http://localhost:9112"
     },
     "client_url": {
-        "production": "https://underplay.xyz",
+        "production": "https://sealblog.xyz",
         "development": "http://localhost:9111" 
     }
 }
