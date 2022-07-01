@@ -476,7 +476,7 @@ export function Token(props: NftManagerProp) {
         <hr />
         {
           <div>
-            <Text transform="capitalize">No Contract/Not Your Contract?</Text>
+            <Text transform="capitalize">No NFT/Not Your NFT?</Text>
             <Text transform="capitalize" variant="large">
               <button className="block" onClick={deploy}>
                 Create New One

@@ -267,7 +267,7 @@ export function NaiveMail() {
       <a
         target={"_blank"}
         href={
-          CHAIN_NETWORKS[chainId!].blockExplorerUrl + "/account/" + m.address
+          CHAIN_NETWORKS[chainId!].blockExplorerUrl + "account/" + m.address
         }
       >
         @{m.name}
@@ -289,7 +289,8 @@ export function NaiveMail() {
       />
       <Card className="block fixed">
         <Text size={"large"} transform="capitalize">
-          welcome to NaiveMail, a full-onchain E2E messaging experiment
+          welcome to NaiveMail, a full-onchain E2E messaging experiment, powered
+          by seal blog
         </Text>
         <hr />
         <Grid container spacing={4} style={{ fontSize: "16px" }}>

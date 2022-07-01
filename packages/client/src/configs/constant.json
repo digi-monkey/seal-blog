@@ -1,6 +1,7 @@
 {
+    "example_blog": "",
     "github_official": "https://github.com/digi-monkey/seal-blog",
-    "twitter_official": "fill me later",
+    "twitter_official": "https://twitter.com/digi_monkey",
     "server_url": {
         "production": "https://api.underplay.xyz",
         "development": "http://localhost:9112"
