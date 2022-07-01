@@ -207,7 +207,7 @@ export function Unseal() {
           <div style={styles.footnote}>
             <div style={styles.footnoteLink}>
               Power by{" "}
-              <a target={"_blank"} href="https://github.com">
+              <a target={"_blank"} href={CLIENT_URL}>
                 Seal Blog
               </a>{" "}
               {"Can't decrypt? You need to subscribe first!"}{" "}
