@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { getChainNetwork } from "./configs/env-config";
-import CONTRACT_ARTIFACTS from "./configs/blockchain/contract-artifact.json";
+import CONTRACT_ARTIFACTS from "./configs/blockchain/contract-artifact/NaiveFriends721.json";
 import { HexNum, HexStr, DecimalStr, parsePostId } from "@seal-blog/sdk";
 
 export const getProvider = (chainId: HexNum) => {

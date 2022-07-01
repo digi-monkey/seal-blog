@@ -26,6 +26,7 @@ export interface AccountProp {
   accountCallback?: (account: string) => any;
   encryptionPublicKeyCallback?: (pk: string) => any;
   chainIdCallBack?: (chainId: string) => any;
+  classNames?: string[];
 }
 
 export function Account(prop: AccountProp) {
@@ -186,7 +187,7 @@ export function Account(prop: AccountProp) {
   };
 
   return (
-    <div>
+    <div className={prop.classNames ? prop.classNames.join(" ") : ""}>
       <Grid container spacing={1}>
         <Grid item xs={4}>
           <div style={styles.siteName}>

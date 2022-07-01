@@ -2,7 +2,11 @@ import React from "react";
 import { Grid } from "@material-ui/core";
 import { Stack, Box, Text, Button } from "degen";
 import { donate } from "../../configs/blockchain/addresses.json";
-import { github_official, twitter_official } from "../../configs/constant.json";
+import {
+  github_official,
+  twitter_official,
+  example_blog,
+} from "../../configs/constant.json";
 
 import { version as sdkVersion } from "@seal-blog/sdk/package.json";
 const { version } = require("../../../package.json");
@@ -156,11 +160,15 @@ export function Home() {
 `}
                 </code>
               </pre>
-            </Box>
-            <Box>
+              <Box textAlign={"center"}></Box>
               <Text variant="large">
                 Turn your personal blog post encrypted and only readable with
                 NFT membership token holder.
+                <br /> Check out{" "}
+                <a target={"_blank"} href={example_blog}>
+                  example blog
+                </a>
+                .
               </Text>
             </Box>
             <hr />
@@ -169,7 +177,7 @@ export function Home() {
                 onClick={direct2UserPage}
                 width={{ xs: "full", md: "full" }}
               >
-                Connect With Your Blog
+                Connect Your Blog
               </Button>
             </Box>
           </Stack>
@@ -205,18 +213,28 @@ export function Home() {
                 became a token holder.
               </Text>
               <Text>
-                The pay wall has some advantage: (1. You gain crypto money via
-                ERC721 smart-contract, no one can touch your fund. (2. You can
-                keep blogging free content as you want just like before. When
-                you want to write some premium content, the encryption is also
-                very flexible, you can even encrypt one single word in your
-                whole post, it doesn't have any limit. (3. It is easy to setup.
-                just insert one javascript code into your blog html page, it's
-                done! (we also support third party blog platform if you don't
-                control the source code of you blog. See below.) (4. The token
-                is not only a pay wall, you can use it as an fan level
-                badge/membership token and anything you can do with NFT, it all
-                depends on your imagination! Thus it is an new connection
+                The pay wall has some advantage:
+                <br />
+                <br />
+                (1. You gain crypto money via ERC721 smart-contract, no one can
+                touch your fund.
+                <br />
+                <br />
+                (2. You can keep blogging free content as you want just like
+                before. When you want to write some premium content, the
+                encryption is also very flexible, you can even encrypt one
+                single word in your whole post, it doesn't have any limit.
+                <br />
+                <br />
+                (3. It is easy to setup. just insert one javascript code into
+                your blog html page, it's done! (we also support third party
+                blog platform if you don't control the source code of you blog.
+                See below.)
+                <br />
+                <br />
+                (4. The token is not only a pay wall, you can use it as an fan
+                level badge/membership token and anything you can do with NFT,
+                it all depends on your imagination! Thus it is an new connection
                 between bloggers and readers.
               </Text>
               <Text variant="large" transform="capitalize">
@@ -284,6 +302,18 @@ export function Home() {
                 <br /> - More flexible NFT token price setting.
                 <br /> - More extendable NFT token to enable more use cases
               </Text>
+              <div
+                style={{ padding: "10px", background: "rgba(0, 0, 0, .075)" }}
+              >
+                <Text>
+                  We are currently on beta testing, please use seal to help
+                  build the product.{" "}
+                </Text>
+                <Text>
+                  Users who participated in testing will gain a access to
+                  community DAO in the future.
+                </Text>
+              </div>
               <Text variant="large" transform="capitalize">
                 Acknowledgements
               </Text>
@@ -304,6 +334,9 @@ export function Home() {
                 </a>{" "}
                 <a target={"_blank"} href={github_official}>
                   github
+                </a>{" "}
+                <a target={"_blank"} href="/mail">
+                  naive mail
                 </a>{" "}
               </Text>
             </Stack>

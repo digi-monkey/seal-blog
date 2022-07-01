@@ -1,14 +1,15 @@
-import ContractArtifact from "../configs/blockchain/contract-artifact.json";
+import NaiveFriends721ContractArtifact from "../configs/blockchain/contract-artifact/NaiveFriends721.json";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
-import { Contract } from "web3-eth-contract";
+import { Contract, EventData } from "web3-eth-contract";
 import { HexStr } from "@seal-blog/sdk";
+import { ethers } from "ethers";
 
-export const CONTRACT_ARTIFACT = ContractArtifact;
+export const NAIVE_FRIENDS_CONTRACT_ARTIFACT = NaiveFriends721ContractArtifact;
 
 export const web3 = new Web3(Web3.givenProvider);
 export const contractFactory = new web3.eth.Contract(
-  CONTRACT_ARTIFACT.abi as AbiItem[]
+  NAIVE_FRIENDS_CONTRACT_ARTIFACT.abi as AbiItem[]
 );
 
 export const ZERO_ADDRESS = "0x" + "0".repeat(40);
@@ -87,3 +88,42 @@ export const isSubscriber = async (
 
   return true;
 };
+
+// event
+export interface DecodedEventLog {
+  [key: string]: any;
+}
+export interface DecEventData extends EventData {
+  decoded: DecodedEventLog;
+}
+
+export type Topic = HexStr[] | HexStr | null;
+
+export async function getContractEventLogs(
+  contractAddress: HexStr,
+  abi: any,
+  eventName: string,
+  filterTopics: Topic[] = [],
+  fromBlock: string = "earliest",
+  toBlock: string = "latest"
+) {
+  const contractInterface = new ethers.utils.Interface(abi);
+  const fragment = contractInterface.getEvent(eventName);
+  const topics = contractInterface.encodeFilterTopics(fragment, filterTopics);
+  const contract = new web3.eth.Contract(abi as AbiItem[], contractAddress);
+  const events: EventData[] = await contract.getPastEvents(eventName, {
+    topics,
+    fromBlock,
+    toBlock,
+  });
+  return events.map((e) => {
+    const data = e.raw.data;
+    const topics = e.raw.topics;
+    const decoded = contractInterface.decodeEventLog(fragment, data, topics);
+    const r: DecEventData = {
+      ...e,
+      decoded,
+    };
+    return r;
+  });
+}

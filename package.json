@@ -16,9 +16,19 @@
     "lint": "yarn workspaces run lint",
     "build": "yarn workspaces run build",
     "web": "yarn workspace @seal-blog/server ts-node-dev src/view.ts",
-    "artifact:server": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/server/src/configs/blockchain/contract-artifact.json",
-    "artifact:client": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/client/src/configs/blockchain/contract-artifact.json",
-    "artifact": "yarn artifact:server && yarn artifact:client"
+    "artifact:server": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/server/src/configs/blockchain/contract-artifact/",
+    "artifact:client": "cp packages/contract/artifacts/contracts/NaiveFriends721.sol/NaiveFriends721.json packages/client/src/configs/blockchain/contract-artifact/",
+    "artifact:main": "yarn artifact:server && yarn artifact:client",
+    "artifact:channel:server": "cp packages/contract/artifacts/contracts/NaiveChannel.sol/NaiveChannel.json packages/server/src/configs/blockchain/contract-artifact/",
+    "artifact:channel:client": "cp packages/contract/artifacts/contracts/NaiveChannel.sol/NaiveChannel.json packages/client/src/configs/blockchain/contract-artifact/",
+    "artifact:channel": "yarn artifact:channel:server && yarn artifact:channel:client",
+    "artifact:mail:server": "cp packages/contract/artifacts/contracts/NaiveMail.sol/NaiveMail.json packages/server/src/configs/blockchain/contract-artifact/",
+    "artifact:mail:client": "cp packages/contract/artifacts/contracts/NaiveMail.sol/NaiveMail.json packages/client/src/configs/blockchain/contract-artifact/",
+    "artifact:mail": "yarn artifact:mail:server && yarn artifact:mail:client",
+    "artifact:mailRoot:server": "cp packages/contract/artifacts/contracts/NaiveRootServer.sol/NaiveRootServer.json packages/server/src/configs/blockchain/contract-artifact/",
+    "artifact:mailRoot:client": "cp packages/contract/artifacts/contracts/NaiveRootServer.sol/NaiveRootServer.json packages/client/src/configs/blockchain/contract-artifact/",
+    "artifact:mailRoot": "yarn artifact:mailRoot:server && yarn artifact:mailRoot:client",
+    "artifact": "yarn artifact:main && yarn artifact:channel && yarn artifact:mail && yarn artifact:mailRoot"
   },
   "devDependencies": {
     "@types/node": "^16.11.6",

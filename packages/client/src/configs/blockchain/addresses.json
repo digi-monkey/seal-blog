@@ -2,5 +2,37 @@
   "donate": {
     "eth": "0xb7FAF28FD63DfBD7Ae0619E3243cEcB34fd71336",
     "ckb": "ckb1qyqw4rfzc5xe5kq3t0px5s9rtcf9yz7gkf4s894y0y"
+  },
+
+  "predefineContracts": {
+    "0x1": {
+      "NaiveChannel": null,
+      "NaiveRootServer": null
+    },
+
+    "0x4": {
+      "NaiveChannel": "0xf3d637642349080c4b33Fd4E7d1A7F1638B3B65A",
+      "NaiveRootServer": "0x603162D4184954B229f65ed24273787F3D64e0E5" 
+    },
+
+    "0x38": {
+      "NaiveChannel": null,
+      "NaiveRootServer": null
+    },
+
+    "0x61": {
+      "NaiveChannel": null,
+      "NaiveRootServer": null
+    },
+
+    "0x116e9": {
+      "NaiveChannel": "0x70c98DC221980960e61b180c23495a88F1C161Cd",
+      "NaiveRootServer": "0x48E1A75306a67F86299A4c0381bc9558C8B6964C"
+    },
+
+    "0x116e8": {
+      "NaiveChannel": null,
+      "NaiveRootServer": null
+    }
   } 
 }
