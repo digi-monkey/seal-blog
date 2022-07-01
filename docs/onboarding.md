@@ -4,7 +4,11 @@ Pre-Requires:
 
 - Only support Web, unavailable for Mobile
 - Install [Metamask extension](https://metamask.io/) and setup Wallet on your browser
-- Set up Godwoken Layer2 Account by [depositing CKB](https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1)
+- You might need to setup layer2 account according to the blockchain network you selected.
+
+In the following tutorial, we use Godwoken network with CKB token, other layer2 networks goes the same way. 
+
+Before you start, set up Godwoken Layer2 Account by [depositing CKB](https://light-godwoken-git-tx-history-cryptape.vercel.app/#/v1)
 
 ## Blogger
 
