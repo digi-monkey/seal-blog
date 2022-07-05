@@ -11,7 +11,7 @@ import { HexNum } from "@seal-blog/sdk";
 import { AppContext, Context } from "./hooks/useContext";
 import { LocalStore } from "./localStore";
 import { NaiveMail } from "./components/NaiveMail/NaiveMail";
-//import { DeployContracts } from "./components/NaiveMail/Deploy";
+import { DeployContracts } from "./components/NaiveMail/Deploy";
 
 export default function MyRouter() {
   const storeChainId = LocalStore.selectChainId();
@@ -31,11 +31,11 @@ export default function MyRouter() {
           <Route path="/mail">
             <NaiveMail />
           </Route>
-          {/* 
-          <Route path="/deploy">
-            <DeployContracts />
-          </Route>
-          */}
+          {
+            <Route path="/deploy">
+              <DeployContracts />
+            </Route>
+          }
           <Route path="/user">
             <User />
           </Route>
