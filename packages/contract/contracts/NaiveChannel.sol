@@ -12,10 +12,6 @@ struct Channel {
     uint256 token2; // tokenId
     bool muteToken1;
     bool muteToken2;
-    // writable
-    // todo: limit length
-    string msg1;
-    string msg2;
 }
 
 contract NaiveChannel {
@@ -62,9 +58,7 @@ contract NaiveChannel {
             tokenId1,
             tokenId2,
             false,
-            false,
-            "",
-            ""
+            false
         );
         _channelIds.increment();
         uint256 id = _channelIds.current();
@@ -92,8 +86,7 @@ contract NaiveChannel {
         if (nft == channel.nft1 && tokenId == channel.token1) {
             checkOwnerOfToken(channel.nft1, address(msg.sender), tokenId);
 
-            // overwirte new message;
-            channel.msg1 = encryptToMsg;
+            // gen new message;
             NaiveFriends721 nf2 = NaiveFriends721(channel.nft2);
             address toNotifyUser = nf2.ownerOf(channel.token2);
             emit NewMessage(channelId, toNotifyUser, encryptToMsg);
@@ -104,8 +97,7 @@ contract NaiveChannel {
         if (nft == channel.nft2 && tokenId == channel.token2) {
             checkOwnerOfToken(channel.nft2, address(msg.sender), tokenId);
 
-            // overwirte new message;
-            channel.msg2 = encryptToMsg;
+            // gen new message;
             NaiveFriends721 nf1 = NaiveFriends721(channel.nft1);
             address toNotifyUser = nf1.ownerOf(channel.token1);
             emit NewMessage(channelId, toNotifyUser, encryptToMsg);
@@ -115,25 +107,6 @@ contract NaiveChannel {
 
         // wrong side
         revert wrongSideChannel(channelId);
-    }
-
-    // read newest one msg, history msg can be read from event log
-    // note: no auth check
-    function readMsg(
-        uint256 channelId,
-        uint256 tokenId // reader's nft token id
-    ) public view returns (string memory encryptText) {
-        Channel memory channel = channelById[channelId];
-        if (tokenId != channel.token1 && tokenId != channel.token2) {
-            revert wrongChannel(channelId);
-        }
-
-        if (tokenId == channel.token1) {
-            return channel.msg2;
-        }
-        if (tokenId == channel.token2) {
-            return channel.msg1;
-        }
     }
 
     function checkOwnerOfToken(
